@@ -28,6 +28,7 @@
             box-shadow: 0 0 20px #2ecc71;
             border-radius: 15px;
             max-width: 90%;
+            cursor: pointer;
         }
 
         h1 {
@@ -40,6 +41,25 @@
         p {
             color: #e0e0e0;
             font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        /* タップを促すテキストのスタイル */
+        .tap-guide {
+            font-size: 0.9rem;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px dashed #2ecc71;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
         }
 
         .petal {
@@ -68,9 +88,10 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" onclick="alert('みどたん、お誕生日おめでとう！いつも最高の時間をありがとう！💜')">
         <h1>🎉 みどたん誕生日おめでとう！ 💜</h1>
         <p>いつも最高の配信をありがとう！最高の1年になりますように！</p>
+        <div class="tap-guide">👇 ここをタップしてね！</div>
     </div>
 
     <script>
