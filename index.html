@@ -20,10 +20,10 @@
             justify-content: center;
             text-align: center;
             position: relative;
-            transition: background 0.5s;
+            transition: background 0.4s ease;
         }
 
-        /* タップしたあとに背景を「白」にするクラス */
+        /* タップしたあとに背景を「完全な白」にする */
         body.white-bg {
             background: #ffffff !important;
         }
@@ -90,7 +90,7 @@
             100% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        /* 立ち絵のスタイル */
+        /* 立ち絵のスタイル（新しいファイル名 IMG_3892.jpeg を指定） */
         #midori-chan {
             position: absolute;
             bottom: -150vh;
@@ -101,7 +101,8 @@
             z-index: 10;
             pointer-events: none;
             transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.15));
+            /* 白背景の四角を馴染ませるためのブレンドモード（multiplyで白い部分が透明化します） */
+            mix-blend-mode: multiply;
         }
 
         #midori-chan.show {
@@ -156,8 +157,8 @@
 </head>
 <body>
 
-    <!-- 立ち絵画像 -->
-    <img id="midori-chan" src="IMG_3887.jpeg" alt="ミドリさん">
+    <!-- 新しい画像ファイル名 IMG_3892.jpeg をセット -->
+    <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
 
     <!-- 最初に出るお祝いボタン -->
     <div class="container" id="welcome-box" onclick="triggerCelebration()">
@@ -197,7 +198,7 @@
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
             
-            // タップした瞬間に背景を白に変える
+            // タップしたら背景を真っ白にする
             body.classList.add('white-bg');
             
             // ボタンを消す
