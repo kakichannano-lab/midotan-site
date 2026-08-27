@@ -21,7 +21,7 @@
             position: relative;
         }
 
-        /* 最初に出るお祝いボタン（カード）※一番手前に配置して必ずタップできるようにする */
+        /* 最初に出るお祝いボタン */
         .container {
             position: relative;
             z-index: 30;
@@ -41,7 +41,6 @@
             transform: scale(0.97);
         }
 
-        /* タップしたあとにボタンを完全に消すクラス */
         .container.hide {
             opacity: 0;
             pointer-events: none;
@@ -84,7 +83,7 @@
             100% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        /* 立ち絵のスタイル（最初は非表示） */
+        /* 立ち絵のスタイル（透明部分をきれいに馴染ませるブレンドモード設定） */
         #midori-chan {
             position: absolute;
             bottom: -150vh;
@@ -95,10 +94,10 @@
             z-index: 10;
             pointer-events: none;
             transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            mix-blend-mode: multiply; /* 白や格子模様の背景をサイトの背景になじませる魔法 */
             filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.6));
         }
 
-        /* タップして飛び出したときの状態（画像オンリー） */
         #midori-chan.show {
             bottom: 0;
         }
@@ -165,7 +164,6 @@
     </div>
 
     <script>
-        // 背景の花びらエフェクト
         function createPetal() {
             const petal = document.createElement('div');
             petal.classList.add('petal');
@@ -188,18 +186,13 @@
 
         setInterval(createPetal, 300);
 
-        // タップしたとき：ボタンを消して、立ち絵を出して、紙吹雪を舞わせる
         function triggerCelebration() {
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
             
-            // ボタンを消す
             box.classList.add('hide');
-            
-            // 立ち絵を出す
             midori.classList.add('show');
             
-            // 紙吹雪を大量発生
             for (let i = 0; i < 60; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
