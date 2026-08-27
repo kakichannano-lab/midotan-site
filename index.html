@@ -14,118 +14,23 @@
             overflow: hidden;
             height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-        }
-
-        .container {
-            z-index: 10;
-            padding: 25px 20px;
-            background: rgba(0, 0, 0, 0.75);
-            border: 2px solid #9b59b6;
-            box-shadow: 0 0 25px #2ecc71;
-            border-radius: 15px;
-            width: 88%;
-            max-width: 400px;
+            position: relative;
             cursor: pointer;
-            box-sizing: border-box;
-            transition: transform 0.1s;
         }
 
-        .container:active {
-            transform: scale(0.97);
-        }
-
-        h1 {
-            color: #2ecc71;
-            text-shadow: 0 0 10px #9b59b6;
-            font-size: 1.5rem;
-            margin: 0 0 12px 0;
-            line-height: 1.4;
-        }
-
-        h1 span {
-            display: block;
-        }
-
-        p {
-            color: #e0e0e0;
-            font-size: 0.95rem;
-            margin: 0 0 18px 0;
-            line-height: 1.5;
-        }
-
-        .tap-guide {
-            font-size: 0.85rem;
-            color: #2ecc71;
-            background: rgba(46, 204, 113, 0.15);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px dashed #2ecc71;
-            animation: pulseText 1.5s infinite;
-        }
-
-        @keyframes pulseText {
-            0% { opacity: 0.4; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.4; transform: scale(0.95); }
-        }
-
-        /* 立ち絵のスタイル（最初は画面の下に隠す） */
+        /* 立ち絵のスタイル（背景の白い部分や四角さをカバーしつつ綺麗に配置） */
         #midori-chan {
             position: absolute;
-            bottom: -150vh;
+            bottom: 0;
             left: 50%;
-            transform: translateX(-50%) scale(0.8);
-            max-height: 80vh;
+            transform: translateX(-50%);
+            max-height: 95vh;
+            max-width: 100vw;
             z-index: 5;
             pointer-events: none;
-            transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            filter: drop-shadow(0 0 20px rgba(46, 204, 113, 0.8));
-        }
-
-        /* タップして飛び出したときの状態 */
-        #midori-chan.show {
-            bottom: 5vh;
-        }
-
-        /* タップしたあとに現れるお祝いメッセージカード */
-        #message-card {
-            position: absolute;
-            top: 10vh;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #2ecc71;
-            box-shadow: 0 0 30px #9b59b6;
-            border-radius: 15px;
-            padding: 20px;
-            width: 85%;
-            max-width: 350px;
-            z-index: 20;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none;
-        }
-
-        #message-card.show {
-            transform: translateX(-50%) scale(1);
-        }
-
-        #message-card h2 {
-            color: #2ecc71;
-            font-size: 1.2rem;
-            margin: 0 0 10px 0;
-            text-shadow: 0 0 8px #9b59b6;
-        }
-
-        #message-card p {
-            color: #fff;
-            font-size: 0.9rem;
-            margin: 0;
-            line-height: 1.6;
+            filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.6));
         }
 
         /* 紙吹雪のスタイル */
@@ -135,7 +40,7 @@
             height: 10px;
             opacity: 0;
             pointer-events: none;
-            z-index: 2;
+            z-index: 10;
         }
 
         @keyframes confettiFall {
@@ -156,6 +61,7 @@
             opacity: 0.8;
             pointer-events: none;
             animation: blowUp 4s linear infinite;
+            z-index: 2;
         }
 
         @keyframes blowUp {
@@ -173,25 +79,10 @@
         }
     </style>
 </head>
-<body>
+<body onclick="triggerCelebration()">
 
-    <!-- 実際のファイル名（IMG_3875.jpeg）に合わせた立ち絵画像 -->
+    <!-- 立ち絵画像 -->
     <img id="midori-chan" src="IMG_3875.jpeg" alt="ミドリさん">
-
-    <!-- タップしたときに出るお祝いメッセージカード -->
-    <div id="message-card">
-        <h2>🎂 Happy Birthday! 💜</h2>
-        <p>みどたん、お誕生日おめでとう！<br>いつも最高の時間を本当にありがとう！<br>最高の一年になりますように！✨</p>
-    </div>
-
-    <div class="container" onclick="triggerCelebration()">
-        <h1>
-            <span>🎉 みどたん誕生日</span>
-            <span>おめでとう！ 💜</span>
-        </h1>
-        <p>いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
-        <div class="tap-guide">👇 タップしてお祝い！</div>
-    </div>
 
     <script>
         // 背景の花びらエフェクト
@@ -217,16 +108,8 @@
 
         setInterval(createPetal, 300);
 
-        // タップしたときの演出
+        // 画面どこをタップしても紙吹雪がドーンと舞う演出
         function triggerCelebration() {
-            const midori = document.getElementById('midori-chan');
-            const card = document.getElementById('message-card');
-            
-            // 立ち絵とメッセージカードを表示状態にする
-            midori.classList.add('show');
-            card.classList.add('show');
-            
-            // 紙吹雪を大量発生
             for (let i = 0; i < 60; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
