@@ -31,6 +31,11 @@
             max-width: 400px;
             cursor: pointer;
             box-sizing: border-box;
+            transition: transform 0.1s;
+        }
+
+        .container:active {
+            transform: scale(0.97);
         }
 
         h1 {
@@ -42,7 +47,7 @@
         }
 
         h1 span {
-            display: block; /* 確実に2行になるようにする指定 */
+            display: block;
         }
 
         p {
@@ -67,6 +72,45 @@
             0% { opacity: 0.4; transform: scale(0.95); }
             50% { opacity: 1; transform: scale(1.05); }
             100% { opacity: 0.4; transform: scale(0.95); }
+        }
+
+        /* 立ち絵のスタイル（最初は画面の下に隠す） */
+        #midori-chan {
+            position: absolute;
+            bottom: -120vh;
+            left: 50%;
+            transform: translateX(-50%) scale(0.85);
+            max-height: 85vh;
+            z-index: 5;
+            pointer-events: none;
+            transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            filter: drop-shadow(0 0 15px rgba(46, 204, 113, 0.6));
+        }
+
+        /* タップして飛び出したときの状態 */
+        #midori-chan.show {
+            bottom: 0;
+        }
+
+        /* 紙吹雪のスタイル */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg) scale(0.5);
+                opacity: 0;
+            }
         }
 
         .petal {
@@ -95,16 +139,20 @@
 </head>
 <body>
 
-    <div class="container" onclick="alert('みどたん、お誕生日おめでとう！いつも最高の時間をありがとう！💜')">
+    <!-- アップロードした画像ファイル名を指定 -->
+    <img id="midori-chan" src="midori.png" alt="ミドリさん">
+
+    <div class="container" onclick="triggerCelebration()">
         <h1>
             <span>🎉 みどたん誕生日</span>
             <span>おめでとう！ 💜</span>
         </h1>
         <p>いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
-        <div class="tap-guide">👇 ここをタップしてね！</div>
+        <div class="tap-guide">👇 タップしてお祝い！</div>
     </div>
 
     <script>
+        // 背景の花びらエフェクト
         function createPetal() {
             const petal = document.createElement('div');
             petal.classList.add('petal');
@@ -126,6 +174,41 @@
         }
 
         setInterval(createPetal, 300);
+
+        // タップしたときの演出
+        function triggerCelebration() {
+            const midori = document.getElementById('midori-chan');
+            
+            // 立ち絵を飛び出させる
+            midori.classList.add('show');
+            
+            // 紙吹雪を大量発生
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const colors = ['#2ecc71', '#9b59b6', '#ffffff', '#f1c40f'];
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%';
+                }
+
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.animation = `confettiFall ${Math.random() * 2 + 2}s linear forwards`;
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 4000);
+            }
+
+            // メッセージ表示
+            setTimeout(() => {
+                alert('🎂 みどたんお誕生日おめでとう！🎉\nいつも最高の時間を本当にありがとう！素敵な一年になりますように！💜');
+            }, 500);
+        }
     </script>
 
 </body>
