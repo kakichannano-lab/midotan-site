@@ -83,7 +83,7 @@
             100% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        /* 立ち絵のスタイル（透明部分をきれいに馴染ませるブレンドモード設定） */
+        /* 立ち絵のスタイル（キャラクター本来の色を保ったまま綺麗に配置） */
         #midori-chan {
             position: absolute;
             bottom: -150vh;
@@ -94,7 +94,6 @@
             z-index: 10;
             pointer-events: none;
             transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            mix-blend-mode: multiply; /* 白や格子模様の背景をサイトの背景になじませる魔法 */
             filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.6));
         }
 
