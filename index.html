@@ -14,23 +14,91 @@
             overflow: hidden;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            cursor: pointer;
+            text-align: center;
         }
 
-        /* 立ち絵のスタイル（背景の白い部分や四角さをカバーしつつ綺麗に配置） */
+        /* 最初に出るお祝いボタン（カード） */
+        .container {
+            z-index: 10;
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 2px solid #9b59b6;
+            box-shadow: 0 0 25px #2ecc71;
+            border-radius: 15px;
+            width: 88%;
+            max-width: 400px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: transform 0.1s, opacity 0.5s;
+        }
+
+        .container:active {
+            transform: scale(0.97);
+        }
+
+        /* タップしたあとにボタンを完全に消すクラス */
+        .container.hide {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        h1 {
+            color: #2ecc71;
+            text-shadow: 0 0 10px #9b59b6;
+            font-size: 1.5rem;
+            margin: 0 0 12px 0;
+            line-height: 1.4;
+        }
+
+        h1 span {
+            display: block;
+        }
+
+        p {
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            margin: 0 0 18px 0;
+            line-height: 1.5;
+        }
+
+        .tap-guide {
+            font-size: 0.85rem;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px dashed #2ecc71;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
+        }
+
+        /* 立ち絵のスタイル（最初は隠しておく） */
         #midori-chan {
             position: absolute;
-            bottom: 0;
+            bottom: -150vh;
             left: 50%;
             transform: translateX(-50%);
             max-height: 95vh;
             max-width: 100vw;
             z-index: 5;
             pointer-events: none;
+            transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.6));
+        }
+
+        /* タップして飛び出したときの状態（画像オンリー） */
+        #midori-chan.show {
+            bottom: 0;
         }
 
         /* 紙吹雪のスタイル */
@@ -40,7 +108,7 @@
             height: 10px;
             opacity: 0;
             pointer-events: none;
-            z-index: 10;
+            z-index: 20;
         }
 
         @keyframes confettiFall {
@@ -79,10 +147,20 @@
         }
     </style>
 </head>
-<body onclick="triggerCelebration()">
+<body>
 
-    <!-- 立ち絵画像 -->
-    <img id="midori-chan" src="IMG_3875.jpeg" alt="ミドリさん">
+    <!-- 新しい画像ファイル名に合わせた立ち絵 -->
+    <img id="midori-chan" src="IMG_3887.jpeg" alt="ミドリさん">
+
+    <!-- 最初に出るお祝いボタン -->
+    <div class="container" id="welcome-box" onclick="triggerCelebration()">
+        <h1>
+            <span>🎉 みどたん誕生日</span>
+            <span>おめでとう！ 💜</span>
+        </h1>
+        <p>いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
+        <div class="tap-guide">👇 タップしてお祝い！</div>
+    </div>
 
     <script>
         // 背景の花びらエフェクト
@@ -101,15 +179,25 @@
 
             document.body.appendChild(petal);
 
-            setTimeout(() => {
+4            setTimeout(() => {
                 petal.remove();
             }, 4000);
         }
 
         setInterval(createPetal, 300);
 
-        // 画面どこをタップしても紙吹雪がドーンと舞う演出
+        // タップしたとき：ボタンを消して、立ち絵を出して、紙吹雪を舞わせる
         function triggerCelebration() {
+            const box = document.getElementById('welcome-box');
+            const midori = document.getElementById('midori-chan');
+            
+            // ボタンを消す
+            box.classList.add('hide');
+            
+            // 立ち絵を出す
+            midori.classList.add('show');
+            
+            // 紙吹雪を大量発生
             for (let i = 0; i < 60; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
