@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>みどたん 誕生日おめでとう！</title>
     <style>
+        /* 初期状態の背景（グラデーション） */
         body {
             margin: 0;
             padding: 0;
@@ -19,6 +20,12 @@
             justify-content: center;
             text-align: center;
             position: relative;
+            transition: background 0.5s;
+        }
+
+        /* タップしたあとに背景を「白」にするクラス */
+        body.white-bg {
+            background: #ffffff !important;
         }
 
         /* 最初に出るお祝いボタン */
@@ -83,7 +90,7 @@
             100% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        /* 立ち絵のスタイル（キャラクター本来の色を保ったまま綺麗に配置） */
+        /* 立ち絵のスタイル */
         #midori-chan {
             position: absolute;
             bottom: -150vh;
@@ -94,7 +101,7 @@
             z-index: 10;
             pointer-events: none;
             transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.6));
+            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.15));
         }
 
         #midori-chan.show {
@@ -186,17 +193,25 @@
         setInterval(createPetal, 300);
 
         function triggerCelebration() {
+            const body = document.body;
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
             
+            // タップした瞬間に背景を白に変える
+            body.classList.add('white-bg');
+            
+            // ボタンを消す
             box.classList.add('hide');
+            
+            // 立ち絵を出す
             midori.classList.add('show');
             
+            // 紙吹雪を大量発生
             for (let i = 0; i < 60; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
                 
-                const colors = ['#2ecc71', '#9b59b6', '#ffffff', '#f1c40f'];
+                const colors = ['#2ecc71', '#9b59b6', '#3498db', '#e74c3c'];
                 confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
                 
                 if (Math.random() > 0.5) {
