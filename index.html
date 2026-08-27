@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みどたん 誕生日おめでとう！</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            font-family: sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .container {
+            z-index: 10;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #9b59b6;
+            box-shadow: 0 0 20px #2ecc71;
+            border-radius: 15px;
+            max-width: 90%;
+        }
+
+        h1 {
+            color: #2ecc71;
+            text-shadow: 0 0 10px #9b59b6;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .petal {
+            position: absolute;
+            background: #2ecc71;
+            border-radius: 50%;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: blowUp 4s linear infinite;
+        }
+
+        @keyframes blowUp {
+            0% {
+                transform: scale(0.2) translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5) translateY(-20vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎉 みどたん誕生日おめでとう！ 💜</h1>
+        <p>いつも最高の配信をありがとう！最高の1年になりますように！</p>
+    </div>
+
+    <script>
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            const size = Math.random() * 20 + 10;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.left = Math.random() * window.innerWidth + 'px';
+            
+            petal.style.background = Math.random() > 0.5 ? '#2ecc71' : '#9b59b6';
+            petal.style.boxShadow = '0 0 10px ' + petal.style.background;
+            petal.style.animationDuration = (Math.random() * 2 + 3) + 's';
+
+            document.body.appendChild(petal);
+
+            setTimeout(() => {
+                petal.remove();
+            }, 4000);
+        }
+
+        setInterval(createPetal, 300);
+    </script>
+
+</body>
+</html>
