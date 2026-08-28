@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>みどたん 誕生日おめでとう！</title>
     <style>
-        /* 初期状態の背景（グラデーション） */
         body {
             margin: 0;
             padding: 0;
@@ -23,7 +22,6 @@
             transition: background 0.4s ease;
         }
 
-        /* タップしたあとに背景を「完全な白」にする */
         body.white-bg {
             background: #ffffff !important;
         }
@@ -90,7 +88,7 @@
             100% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        /* 立ち絵のスタイル（新しいファイル名 IMG_3892.jpeg を指定） */
+        /* 立ち絵スタイル */
         #midori-chan {
             position: absolute;
             bottom: -150vh;
@@ -101,7 +99,6 @@
             z-index: 10;
             pointer-events: none;
             transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            /* 白背景の四角を馴染ませるためのブレンドモード（multiplyで白い部分が透明化します） */
             mix-blend-mode: multiply;
         }
 
@@ -109,47 +106,25 @@
             bottom: 0;
         }
 
-        /* 紙吹雪のスタイル */
-        .confetti {
+        /* ぶどう・ミント・星のエフェクト用共通クラス */
+        .falling-item {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            opacity: 0;
             pointer-events: none;
             z-index: 40;
+            user-select: none;
         }
 
-        @keyframes confettiFall {
+        /* ミントぶん投げアニメーション */
+        @keyframes throwMint {
             0% {
-                transform: translateY(-100px) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg) scale(0.5);
-                opacity: 0;
-            }
-        }
-
-        .petal {
-            position: absolute;
-            background: #2ecc71;
-            border-radius: 50%;
-            opacity: 0.8;
-            pointer-events: none;
-            animation: blowUp 4s linear infinite;
-            z-index: 2;
-        }
-
-        @keyframes blowUp {
-            0% {
-                transform: scale(0.2) translateY(100vh) translateX(0);
+                transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
                 opacity: 0;
             }
             50% {
                 opacity: 1;
             }
             100% {
-                transform: scale(1.5) translateY(-20vh) translateX(50px);
+                transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.5) rotate(720deg);
                 opacity: 0;
             }
         }
@@ -157,11 +132,9 @@
 </head>
 <body>
 
-    <!-- 新しい画像ファイル名 IMG_3892.jpeg をセット -->
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
 
-    <!-- 最初に出るお祝いボタン -->
-    <div class="container" id="welcome-box" onclick="triggerCelebration()">
+    <div class="container" id="welcome-box" onclick="startShow()">
         <h1>
             <span>🎉 みどたん誕生日</span>
             <span>おめでとう！ 💜</span>
@@ -173,61 +146,135 @@
     <script>
         function createPetal() {
             const petal = document.createElement('div');
-            petal.classList.add('petal');
-            
-            const size = Math.random() * 20 + 10;
-            petal.style.width = size + 'px';
-            petal.style.height = size + 'px';
+            petal.style.position = 'absolute';
+            petal.style.width = (Math.random() * 20 + 10) + 'px';
+            petal.style.height = petal.style.width;
             petal.style.left = Math.random() * window.innerWidth + 'px';
-            
+            petal.style.top = '-20px';
             petal.style.background = Math.random() > 0.5 ? '#2ecc71' : '#9b59b6';
-            petal.style.boxShadow = '0 0 10px ' + petal.style.background;
-            petal.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            petal.style.borderRadius = '50%';
+            petal.style.opacity = '0.8';
+            petal.style.zIndex = '2';
+            petal.style.pointerEvents = 'none';
+            petal.style.transition = 'transform 4s linear, top 4s linear';
 
             document.body.appendChild(petal);
 
             setTimeout(() => {
+                petal.style.top = '105vh';
+                petal.style.transform = `translateX(${(Math.random() - 0.5) * 200}px) rotate(360deg)`;
+            }, 50);
+
+            setTimeout(() => {
                 petal.remove();
-            }, 4000);
+            }, 4100);
         }
 
         setInterval(createPetal, 300);
 
-        function triggerCelebration() {
+        function startShow() {
             const body = document.body;
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
             
-            // タップしたら背景を真っ白にする
-            body.classList.add('white-bg');
-            
-            // ボタンを消す
             box.classList.add('hide');
-            
-            // 立ち絵を出す
-            midori.classList.add('show');
-            
-            // 紙吹雪を大量発生
-            for (let i = 0; i < 60; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                
-                const colors = ['#2ecc71', '#9b59b6', '#3498db', '#e74c3c'];
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                
-                if (Math.random() > 0.5) {
-                    confetti.style.borderRadius = '50%';
-                }
 
-                confetti.style.left = Math.random() * window.innerWidth + 'px';
-                confetti.style.animation = `confettiFall ${Math.random() * 2 + 2}s linear forwards`;
+            // 1. ぶどうが上からたくさん降ってきて下に溜まる演出 (約3秒間)
+            let grapeInterval = setInterval(() => {
+                let grape = document.createElement('div');
+                grape.classList.add('falling-item');
+                grape.innerHTML = '🍇';
+                grape.style.fontSize = (Math.random() * 20 + 25) + 'px';
+                grape.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+                grape.style.top = '-50px';
+                
+                // 下にランダムに積もる位置 (画面の下部付近)
+                let stopY = window.innerHeight - (Math.random() * 120 + 20);
+                let duration = Math.random() * 1 + 1.5;
 
-                document.body.appendChild(confetti);
+                grape.style.transition = `top ${duration}s ease-in, transform ${duration}s ease-in`;
+                document.body.appendChild(grape);
 
                 setTimeout(() => {
-                    confetti.remove();
-                }, 4000);
-            }
+                    grape.style.top = stopY + 'px';
+                    grape.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }, 50);
+
+                // 積もったあとに消えないように残しつつ、後で一括消去できるようにクラスを付与
+                grape.classList.add('stacked-grape');
+
+                setTimeout(() => {
+                    // 落ちた後の微調整
+                }, duration * 1000);
+            }, 100);
+
+            // 3秒後にぶどうをストップし、ハート型の星を散らばせる
+            setTimeout(() => {
+                clearInterval(grapeInterval);
+
+                // ハート型の星を散らばせる
+                for (let i = 0; i < 40; i++) {
+                    let star = document.createElement('div');
+                    star.classList.add('falling-item');
+                    star.innerHTML = Math.random() > 0.5 ? '💖' : '⭐';
+                    star.style.fontSize = (Math.random() * 15 + 20) + 'px';
+                    
+                    // ハートの数式配置 (ざっくりハート型になるように計算)
+                    let t = Math.random() * Math.PI * 2;
+                    let hx = 16 * Math.pow(Math.sin(t), 3);
+                    let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    
+                    let centerX = window.innerWidth / 2;
+                    let centerY = window.innerHeight / 2;
+                    
+                    star.style.left = (centerX + hx * 12) + 'px';
+                    star.style.top = (centerY + hy * 12) + 'px';
+                    star.style.transition = 'all 1.5s ease-out';
+                    
+                    document.body.appendChild(star);
+
+                    setTimeout(() => {
+                        star.style.transform = `translate(${(Math.random() - 0.5) * 300}px, ${(Math.random() - 0.5) * 300}px) scale(1.5)`;
+                        star.style.opacity = '0';
+                    }, 50);
+
+                    setTimeout(() => star.remove(), 1500);
+                }
+
+            }, 3000);
+
+            // 4.5秒後：画面を白くして、立ち絵を出して、ミントをぶん投げる！
+            setTimeout(() => {
+                // 溜まったぶどうを消す
+                document.querySelectorAll('.stacked-grape').forEach(g => g.remove());
+
+                // 背景を白にして立ち絵登場
+                body.classList.add('white-bg');
+                midori.classList.add('show');
+
+                // ミントをぶん投げる演出 (葉っぱやハーブの絵文字 🌿)
+                for (let i = 0; i < 25; i++) {
+                    let mint = document.createElement('div');
+                    mint.classList.add('falling-item');
+                    mint.innerHTML = '🌿';
+                    mint.style.fontSize = (Math.random() * 25 + 25) + 'px';
+                    
+                    // 画面の中央（立ち絵のあたり）から四方八方にぶっ飛ぶ
+                    mint.style.left = '50%';
+                    mint.style.top = '50%';
+
+                    let dx = (Math.random() - 0.5) * window.innerWidth * 0.9;
+                    let dy = (Math.random() - 0.5) * window.innerHeight * 0.9;
+                    mint.style.setProperty('--dx', dx + 'px');
+                    mint.style.setProperty('--dy', dy + 'px');
+
+                    mint.style.animation = `throwMint 0.8s ease-out forwards`;
+                    document.body.appendChild(mint);
+
+                    setTimeout(() => mint.remove(), 800);
+                }
+
+            }, 4500);
         }
     </script>
 
