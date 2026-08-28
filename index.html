@@ -211,12 +211,12 @@
     </div>
 
     <script>
-        // 【ステップ1】最初に流す「しらすまん」専用の配列
-        const shirasumanOnly = [
-            'shirasuman.png' // ※もしファイル名が違う場合はここを変更してね
+        // 最初（チャレンジ後）に流す「肉まん」専用の配列
+        const nikumanOnly = [
+            'IMG_3896.png'
         ];
 
-        // 【ステップ2】NEXTを押したあとに流す写真たちの配列
+        // NEXTを押したあとに流す写真たちの配列
         const photoList = [
             'IMG_5011.jpeg', 'IMG_5010.jpeg', 'IMG_5006.jpeg', 'IMG_5003.jpeg', 'IMG_5002.jpeg',
             'IMG_4999.jpeg', 'IMG_4996.jpeg', 'IMG_4992.jpeg', 'IMG_4983.jpeg', 'IMG_4982.jpeg',
@@ -328,15 +328,15 @@
                 setTimeout(() => {
                     boxTitle.innerHTML = '<span>🚀 スタート！</span>';
                     boxText.style.display = 'none';
-                    boxGuide.innerText = '👇 タップしてしらすまんを流す！';
+                    boxGuide.innerText = '👇 タップして肉まんを流す！';
                     
-                    // 1回目のNEXT：押したら「しらすまん」だけを降らせる
+                    // スタートボタンを押した後の動き：肉まんを降らせる ➔ 終わったらNEXTボタンを出す
                     box.onclick = function() {
                         box.classList.add('hide');
-                        runImageRain(shirasumanOnly, () => {
+                        runImageRain(nikumanOnly, () => {
                             showNextButton("🚀 NEXT！", "👇 タップして写真たちを流す！", () => {
                                 box.classList.add('hide');
-                                // 2回目のNEXT：押したら「たくさんの写真たち」を降らせる
+                                // NEXTボタンを押した後の動き：さっきのたくさんの写真たちを降らせる
                                 runImageRain(photoList, () => {
                                     showNextButton("🎉 完了！", "👇 すべて終了しました！", () => {
                                         alert('お疲れ様でした！');
