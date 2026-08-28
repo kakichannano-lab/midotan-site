@@ -157,7 +157,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像（目に優しいふんわり半透明＆大きめサイズ） */
+        /* 降ってくる画像 */
         .falling-image {
             position: absolute;
             top: -350px;
@@ -211,8 +211,13 @@
     </div>
 
     <script>
-        // アップロードされた画像一覧（今回追加分の画像群をすべて網羅した配列）
-        const shirasumanImages = [
+        // 【ステップ1】最初に流す「しらすまん」専用の配列
+        const shirasumanOnly = [
+            'shirasuman.png' // ※もしファイル名が違う場合はここを変更してね
+        ];
+
+        // 【ステップ2】NEXTを押したあとに流す写真たちの配列
+        const photoList = [
             'IMG_5011.jpeg', 'IMG_5010.jpeg', 'IMG_5006.jpeg', 'IMG_5003.jpeg', 'IMG_5002.jpeg',
             'IMG_4999.jpeg', 'IMG_4996.jpeg', 'IMG_4992.jpeg', 'IMG_4983.jpeg', 'IMG_4982.jpeg',
             'IMG_4981.jpeg', 'IMG_4978.jpeg', 'IMG_7527.png',  'IMG_4971.jpeg', 'IMG_4968.jpeg',
@@ -321,13 +326,24 @@
                 body.classList.remove('white-bg');
 
                 setTimeout(() => {
-                    boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
+                    boxTitle.innerHTML = '<span>🚀 スタート！</span>';
                     boxText.style.display = 'none';
-                    boxGuide.innerText = '👇 タップしてスタート！';
+                    boxGuide.innerText = '👇 タップしてしらすまんを流す！';
                     
+                    // 1回目のNEXT：押したら「しらすまん」だけを降らせる
                     box.onclick = function() {
                         box.classList.add('hide');
-                        runShirasumanRain();
+                        runImageRain(shirasumanOnly, () => {
+                            showNextButton("🚀 NEXT！", "👇 タップして写真たちを流す！", () => {
+                                box.classList.add('hide');
+                                // 2回目のNEXT：押したら「たくさんの写真たち」を降らせる
+                                runImageRain(photoList, () => {
+                                    showNextButton("🎉 完了！", "👇 すべて終了しました！", () => {
+                                        alert('お疲れ様でした！');
+                                    });
+                                });
+                            });
+                        });
                     };
 
                     box.classList.remove('hide');
@@ -336,23 +352,25 @@
             }, 1000);
         }
 
-        function runShirasumanRain() {
+        // 指定した画像リストを順番に降らせる汎用関数
+        function runImageRain(imageList, onComplete) {
             let index = 0;
             let screenWidth = window.innerWidth;
             const laneWidth = screenWidth / 3;
 
             let rainInterval = setInterval(() => {
-                if (index < shirasumanImages.length) {
+                if (index < imageList.length) {
                     let lane = index % 3;
                     let xPos = lane * laneWidth + (laneWidth - 150) / 2 + (Math.random() * 30 - 15);
 
-                    createSingleImage(shirasumanImages[index], xPos);
+                    createSingleImage(imageList[index], xPos);
                     index++;
                 } else {
                     clearInterval(rainInterval);
 
+                    // 最後の画像が落ち切るのを待ってからコールバックを実行
                     setTimeout(() => {
-                        showNextButton();
+                        if (onComplete) onComplete();
                     }, 3800);
                 }
             }, 220);
@@ -374,18 +392,16 @@
             }, duration * 1000);
         }
 
-        function showNextButton() {
+        // NEXTボタンを再表示する関数
+        function showNextButton(titleText, guideText, onClickCallback) {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
             const boxGuide = document.getElementById('box-guide');
 
-            boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
-            boxGuide.innerText = '👇 タップして次へ！';
+            boxTitle.innerHTML = `<span>${titleText}</span>`;
+            boxGuide.innerText = guideText;
             
-            box.onclick = function() {
-                alert('次のNEXTへ進みます！');
-            };
-
+            box.onclick = onClickCallback;
             box.classList.remove('hide');
         }
     </script>
