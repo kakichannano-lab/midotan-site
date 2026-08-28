@@ -157,16 +157,16 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像 */
+        /* 降ってくる画像（サイズを大きくし、隙間を減らす） */
         .falling-image {
             position: absolute;
-            top: -350px;
-            width: 35vw; 
-            max-width: 170px;
+            top: -400px;
+            width: 42vw; 
+            max-width: 210px;
             height: auto;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            opacity: 0.85;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            opacity: 0.9;
             animation: fallOnly linear forwards;
             pointer-events: none;
             z-index: 25;
@@ -177,14 +177,14 @@
                 transform: translateY(0);
                 opacity: 0;
             }
-            10% {
-                opacity: 0.85;
+            8% {
+                opacity: 0.9;
             }
-            90% {
-                opacity: 0.85;
+            92% {
+                opacity: 0.9;
             }
             100% {
-                transform: translateY(calc(100vh + 400px));
+                transform: translateY(calc(100vh + 500px));
                 opacity: 0;
             }
         }
@@ -200,7 +200,7 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 最初および「NEXT！」用のコンテナ -->
+    <!-- 最初およびキラキラNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1 id="box-title">
             <span>🎉 みどたん誕生日</span>
@@ -211,12 +211,21 @@
     </div>
 
     <script>
-        // 最初（チャレンジ後）に流す「肉まん」専用の配列
-        const nikumanOnly = [
-            'IMG_3896.png'
+        // 【1】スタート直後に流す約38件の画像リスト
+        const firstGroupList = [
+            'IMG_4533.jpeg', 'IMG_4539.jpeg', 'IMG_4547.jpeg', 'IMG_4565.jpeg', 
+            'IMG_4593.jpeg', 'IMG_4603.jpeg', 'IMG_4606.jpeg', 'IMG_4608.jpeg', 
+            'IMG_4617.jpeg', 'IMG_4635.jpeg', 'IMG_4680.jpeg', 'IMG_4716.jpeg', 
+            'IMG_4730.jpeg', 'IMG_4737.jpeg', 'IMG_4756.jpeg', 'IMG_4762.jpeg', 
+            'IMG_4763.jpeg', 'IMG_4768.jpeg', 'IMG_4789.jpeg', 'IMG_4799.jpeg', 
+            'IMG_4835.jpeg', 'IMG_4843.jpeg', 'IMG_4867.jpeg', 'IMG_4872.jpeg', 
+            'IMG_4873.jpeg', 'IMG_4875.jpeg', 'IMG_4876.jpeg', 'IMG_4883.jpeg', 
+            'IMG_4915.jpeg', 'IMG_4925.jpeg', 'IMG_4933.jpeg', 'IMG_4963.jpeg', 
+            'IMG_4967.jpeg', 'IMG_4979.jpeg', 'IMG_4986.jpeg', 'IMG_4998.jpeg', 
+            'IMG_5007.jpeg', 'IMG_7541.png'
         ];
 
-        // NEXTを押したあとに流す写真たちの配列
+        // 【2】NEXTを押したあとに流すメインの写真たちの配列
         const photoList = [
             'IMG_5011.jpeg', 'IMG_5010.jpeg', 'IMG_5006.jpeg', 'IMG_5003.jpeg', 'IMG_5002.jpeg',
             'IMG_4999.jpeg', 'IMG_4996.jpeg', 'IMG_4992.jpeg', 'IMG_4983.jpeg', 'IMG_4982.jpeg',
@@ -237,17 +246,7 @@
             'IMG_4667.jpeg', 'IMG_4669.jpeg', 'IMG_4664.jpeg', 'IMG_4665.jpeg', 'IMG_4666.jpeg',
             'IMG_4662.jpeg', 'IMG_4658.jpeg', 'IMG_4656.jpeg', 'IMG_4655.jpeg', 'IMG_4650.jpeg',
             'IMG_4651.jpeg', 'IMG_4648.jpeg', 'IMG_4646.jpeg', 'IMG_4638.jpeg', 'IMG_4634.jpeg',
-            'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg',
-            'IMG_4533.jpeg', 'IMG_4539.jpeg', 'IMG_4547.jpeg', 'IMG_4565.jpeg', 
-            'IMG_4593.jpeg', 'IMG_4603.jpeg', 'IMG_4606.jpeg', 'IMG_4608.jpeg', 
-            'IMG_4617.jpeg', 'IMG_4635.jpeg', 'IMG_4680.jpeg', 'IMG_4716.jpeg', 
-            'IMG_4730.jpeg', 'IMG_4737.jpeg', 'IMG_4756.jpeg', 'IMG_4762.jpeg', 
-            'IMG_4763.jpeg', 'IMG_4768.jpeg', 'IMG_4789.jpeg', 'IMG_4799.jpeg', 
-            'IMG_4835.jpeg', 'IMG_4843.jpeg', 'IMG_4867.jpeg', 'IMG_4872.jpeg', 
-            'IMG_4873.jpeg', 'IMG_4875.jpeg', 'IMG_4876.jpeg', 'IMG_4883.jpeg', 
-            'IMG_4915.jpeg', 'IMG_4925.jpeg', 'IMG_4933.jpeg', 'IMG_4963.jpeg', 
-            'IMG_4967.jpeg', 'IMG_4979.jpeg', 'IMG_4986.jpeg', 'IMG_4998.jpeg', 
-            'IMG_5007.jpeg', 'IMG_7541.png'
+            'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg'
         ];
 
         function startShow() {
@@ -328,15 +327,13 @@
                 setTimeout(() => {
                     boxTitle.innerHTML = '<span>🚀 スタート！</span>';
                     boxText.style.display = 'none';
-                    boxGuide.innerText = '👇 タップして肉まんを流す！';
+                    boxGuide.innerText = '👇 タップして最初の画像たちを流す！';
                     
-                    // スタートボタンを押した後の動き：肉まんを降らせる ➔ 終わったらNEXTボタンを出す
                     box.onclick = function() {
                         box.classList.add('hide');
-                        runImageRain(nikumanOnly, () => {
-                            showNextButton("🚀 NEXT！", "👇 タップして写真たちを流す！", () => {
+                        runImageRain(firstGroupList, () => {
+                            showNextButton("🚀 NEXT！", "👇 タップしてメインの写真たちを流す！", () => {
                                 box.classList.add('hide');
-                                // NEXTボタンを押した後の動き：さっきのたくさんの写真たちを降らせる
                                 runImageRain(photoList, () => {
                                     showNextButton("🎉 完了！", "👇 すべて終了しました！", () => {
                                         alert('お疲れ様でした！');
@@ -352,28 +349,26 @@
             }, 1000);
         }
 
-        // 指定した画像リストを順番に降らせる汎用関数
+        // 画像の隙間を埋めるため、出現間隔を短く(160ms)、ランダムな位置にバラして降らせる関数
         function runImageRain(imageList, onComplete) {
             let index = 0;
             let screenWidth = window.innerWidth;
-            const laneWidth = screenWidth / 3;
 
             let rainInterval = setInterval(() => {
                 if (index < imageList.length) {
-                    let lane = index % 3;
-                    let xPos = lane * laneWidth + (laneWidth - 150) / 2 + (Math.random() * 30 - 15);
+                    // 画面の左右ランダムな位置から落とすことで隙間をシャッフルして埋める
+                    let xPos = Math.random() * (screenWidth - 200);
 
                     createSingleImage(imageList[index], xPos);
                     index++;
                 } else {
                     clearInterval(rainInterval);
 
-                    // 最後の画像が落ち切るのを待ってからコールバックを実行
                     setTimeout(() => {
                         if (onComplete) onComplete();
-                    }, 3800);
+                    }, 3500);
                 }
-            }, 220);
+            }, 160); // 出現スピードを少し速くして密度をアップ
         }
 
         function createSingleImage(imageSrc, xPos) {
@@ -382,7 +377,7 @@
             img.className = 'falling-image';
             img.style.left = xPos + 'px';
 
-            const duration = 3.5;
+            const duration = 3.0; // 落下速度も少し調整
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
@@ -392,7 +387,6 @@
             }, duration * 1000);
         }
 
-        // NEXTボタンを再表示する関数
         function showNextButton(titleText, guideText, onClickCallback) {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
