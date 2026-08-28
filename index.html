@@ -19,7 +19,7 @@
             justify-content: center;
             text-align: center;
             position: relative;
-            transition: background 0.4s ease;
+            transition: background 0.3s ease;
         }
 
         body.white-bg {
@@ -106,27 +106,13 @@
             bottom: 0;
         }
 
-        /* エフェクト用共通クラス */
-        .falling-item {
+        /* ぶどう用クラス */
+        .falling-grape {
             position: absolute;
             pointer-events: none;
             z-index: 40;
             user-select: none;
-        }
-
-        /* ミントぶん投げアニメーション */
-        @keyframes throwMint {
-            0% {
-                transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.5) rotate(720deg);
-                opacity: 0;
-            }
+            transition: top 0.4s linear, transform 0.4s linear;
         }
     </style>
 </head>
@@ -144,34 +130,6 @@
     </div>
 
     <script>
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.style.position = 'absolute';
-            petal.style.width = (Math.random() * 20 + 10) + 'px';
-            petal.style.height = petal.style.width;
-            petal.style.left = Math.random() * window.innerWidth + 'px';
-            petal.style.top = '-20px';
-            petal.style.background = Math.random() > 0.5 ? '#2ecc71' : '#9b59b6';
-            petal.style.borderRadius = '50%';
-            petal.style.opacity = '0.8';
-            petal.style.zIndex = '2';
-            petal.style.pointerEvents = 'none';
-            petal.style.transition = 'transform 4s linear, top 4s linear';
-
-            document.body.appendChild(petal);
-
-            setTimeout(() => {
-                petal.style.top = '105vh';
-                petal.style.transform = `translateX(${(Math.random() - 0.5) * 200}px) rotate(360deg)`;
-            }, 50);
-
-            setTimeout(() => {
-                petal.remove();
-            }, 4100);
-        }
-
-        setInterval(createPetal, 300);
-
         function startShow() {
             const body = document.body;
             const box = document.getElementById('welcome-box');
@@ -179,66 +137,48 @@
             
             box.classList.add('hide');
 
-            // 1. ぶどうが画面を埋め尽くすように大量に降ってきて下に溜まる演出 (約2.5秒間)
+            // ぶどうを爆速・大量発生させて画面を一瞬で埋め尽くす (約1.5秒間)
+            let grapeTimer = 0;
             let grapeInterval = setInterval(() => {
-                // 1回に複数のぶどうを降らせて画面を素早く埋め尽くす
-                for(let i = 0; i < 4; i++) {
+                // 1回につき15個のぶどうを画面全体のランダムな位置に一気に降らせる
+                for(let i = 0; i < 15; i++) {
                     let grape = document.createElement('div');
-                    grape.classList.add('falling-item');
+                    grape.classList.add('falling-grape');
                     grape.innerHTML = '🍇';
-                    grape.style.fontSize = (Math.random() * 25 + 30) + 'px';
-                    grape.style.left = Math.random() * (window.innerWidth - 50) + 'px';
-                    grape.style.top = '-60px';
+                    grape.style.fontSize = (Math.random() * 30 + 35) + 'px'; // 大きめサイズ
                     
-                    // 下から積み重なるようにランダムな位置に停止
-                    let stopY = window.innerHeight - (Math.random() * window.innerHeight * 0.75 + 10);
-                    let duration = Math.random() * 0.8 + 1.0;
+                    let startX = Math.random() * window.innerWidth;
+                    let stopY = Math.random() * window.innerHeight; // 画面の至るところに散らばる
 
-                    grape.style.transition = `top ${duration}s ease-in, transform ${duration}s ease-in`;
+                    grape.style.left = startX + 'px';
+                    grape.style.top = '-80px';
+                    
                     document.body.appendChild(grape);
 
+                    // 爆速で落ちて画面全体を埋める
                     setTimeout(() => {
                         grape.style.top = stopY + 'px';
-                        grape.style.transform = `rotate(${Math.random() * 360}deg)`;
-                    }, 50);
+                        grape.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 1})`;
+                    }, 20);
 
-                    grape.classList.add('stacked-grape');
+                    // 後で一括消去するためのクラス
+                    grape.classList.add('all-grapes');
+                }
+
+                grapeTimer += 50;
+
+                // 1.2秒経ったらぶどうの発生を止め、画面を真っ白にして立ち絵を出す
+                if (grapeTimer >= 1200) {
+                    clearInterval(grapeInterval);
+
+                    // ぶどうを一斉に消す
+                    document.querySelectorAll('.all-grapes').forEach(g => g.remove());
+
+                    // 背景を真っ白にして立ち絵登場！
+                    body.classList.add('white-bg');
+                    midori.classList.add('show');
                 }
             }, 50);
-
-            // 2. 2.5秒後にぶどうの追加を止め、画面が埋まった状態から一気に立ち絵＆白背景に切り替える
-            setTimeout(() => {
-                clearInterval(grapeInterval);
-
-                // 溜まったぶどうを消す
-                document.querySelectorAll('.stacked-grape').forEach(g => g.remove());
-
-                // 背景を白にして立ち絵登場
-                body.classList.add('white-bg');
-                midori.classList.add('show');
-
-                // 3. ミントをぶん投げる演出 (🌿)
-                for (let i = 0; i < 25; i++) {
-                    let mint = document.createElement('div');
-                    mint.classList.add('falling-item');
-                    mint.innerHTML = '🌿';
-                    mint.style.fontSize = (Math.random() * 25 + 25) + 'px';
-                    
-                    mint.style.left = '50%';
-                    mint.style.top = '50%';
-
-                    let dx = (Math.random() - 0.5) * window.innerWidth * 0.9;
-                    let dy = (Math.random() - 0.5) * window.innerHeight * 0.9;
-                    mint.style.setProperty('--dx', dx + 'px');
-                    mint.style.setProperty('--dy', dy + 'px');
-
-                    mint.style.animation = `throwMint 0.8s ease-out forwards`;
-                    document.body.appendChild(mint);
-
-                    setTimeout(() => mint.remove(), 800);
-                }
-
-            }, 2500);
         }
     </script>
 
