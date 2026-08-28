@@ -241,6 +241,26 @@
             'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg'
         ];
 
+        // 【3】最後（いちばん高いギフト）の画像リスト（画像から抽出）
+        const giftList = [
+            'IMG_4572.JPG', 'IMG_4583.JPG', 'IMG_4605.JPG', 'IMG_4644.JPG',
+            'IMG_4618.JPG', 'IMG_4619.JPG', 'IMG_4633.JPG', 'IMG_4631.JPG',
+            'IMG_4671.JPG', 'IMG_4653.JPG', 'IMG_4660.JPG', 'IMG_4679.JPG',
+            'IMG_4681.JPG', 'IMG_4699.JPG', 'IMG_4704.JPG', 'IMG_4698.JPG',
+            'IMG_4703.JPG', 'IMG_4694.JPG', 'IMG_4723.JPG', 'IMG_4715.JPG',
+            'IMG_4513.JPG', 'IMG_4514.JPG', 'IMG_4530.JPG', 'IMG_4519.JPG',
+            'IMG_4517.JPG', 'IMG_4521.JPG', 'IMG_4540.JPG', 'IMG_4538.JPG',
+            'IMG_4543.JPG', 'IMG_4556.JPG', 'IMG_4582.JPG', 'IMG_4579.JPG',
+            'IMG_4544.JPG', 'IMG_4550.JPG', 'IMG_4865.JPG', 'IMG_4868.JPG',
+            'IMG_4862.JPG', 'IMG_4866.JPG', 'IMG_4888.JPG', 'IMG_4975.JPG',
+            'IMG_4973.JPG', 'IMG_4976.JPG', 'IMG_4980.JPG', 'IMG_5009.JPG',
+            'IMG_5045.JPG', 'IMG_5054.JPG', 'IMG_5046.JPG', 'IMG_4512.JPG',
+            'IMG_4826 2.JPG', 'IMG_4850.JPG', 'IMG_4729.JPG', 'IMG_4820.JPG',
+            'IMG_4815.JPG', 'IMG_4797.JPG', 'IMG_4826.JPG', 'IMG_4811.JPG',
+            'IMG_4724.JPG', 'IMG_4848.JPG', 'IMG_4766.JPG', 'IMG_4757.JPG',
+            'IMG_4851.JPG', 'IMG_4818.JPG'
+        ];
+
         function startShow() {
             const body = document.body;
             const box = document.getElementById('welcome-box');
@@ -314,14 +334,23 @@
                 body.classList.remove('white-bg');
 
                 setTimeout(() => {
+                    // 1回目のNEXT
                     showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
+                            // 2回目のNEXT
                             showNextButton("NEXT", () => {
                                 box.classList.add('hide');
                                 runImageRain(photoList, () => {
+                                    // 3回目（ラストのいちばん高いギフト）のNEXT
                                     showNextButton("NEXT", () => {
-                                        alert('お疲れ様でした！');
+                                        box.classList.add('hide');
+                                        runImageRain(giftList, () => {
+                                            // すべて終わったあと
+                                            showNextButton("完了！", () => {
+                                                alert('お疲れ様でした！');
+                                            });
+                                        });
                                     });
                                 });
                             });
