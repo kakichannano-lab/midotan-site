@@ -26,7 +26,7 @@
             background: #ffffff !important;
         }
 
-        /* 最初や次のコンテンツへ進むボタン */
+        /* ボタンスタイル */
         .container {
             position: relative;
             z-index: 30;
@@ -168,6 +168,7 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
+    <!-- 最初および「NEXT！」用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1 id="box-title">
             <span>🎉 みどたん誕生日</span>
@@ -258,15 +259,15 @@
                 // 白背景を元に戻す
                 body.classList.remove('white-bg');
 
-                // ちょっとしてから中央に「次のサプライズへ進む」ボタンを出す
+                // ちょっとしてから中央に「NEXT！」ボタンを出す
                 setTimeout(() => {
-                    boxTitle.innerHTML = '<span>🎁 次のコンテンツへ</span>';
-                    boxText.innerHTML = '準備はいい？次の演出に進もう！';
+                    boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
+                    boxText.style.display = 'none'; // テキスト欄は非表示にしてスッキリさせる
                     boxGuide.innerText = '👇 タップして次へ！';
                     
-                    // ここで次に行う処理を割り当てられるようにしておく
+                    // 次の処理用（後で変更可能）
                     box.onclick = function() {
-                        alert('次のコンテンツはここに実装予定！'); // 後で書き換えられます
+                        alert('次の演出はここに実装予定！');
                     };
 
                     box.classList.remove('hide');
