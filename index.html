@@ -186,11 +186,6 @@
 </head>
 <body>
 
-    <!-- BGM（著作権フリーの明るいポップ・お祝い向け音源） -->
-    <audio id="bgm" loop preload="auto">
-        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-piano-496.mp3" type="audio/mp3">
-    </audio>
-
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
     <div id="challenge-btn" onclick="throwNikuman()">
@@ -267,12 +262,52 @@
             'IMG_4851.JPG', 'IMG_4818.JPG'
         ];
 
+        // ハッピーバースデーのメロディを鳴らす関数（Web Audio API）
+        function playHappyBirthday() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                // 音階の周波数 (Hz)
+                const G3 = 196.00, A3 = 220.00, B3 = 246.94, C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, C5 = 523.25;
+
+                // メロディの楽譜 [周波数, 長さ(秒)]
+                const melody = [
+                    [G3, 0.2], [G3, 0.2], [A3, 0.4], [G3, 0.4], [C4, 0.4], [B3, 0.8],
+                    [G3, 0.2], [G3, 0.2], [A3, 0.4], [G3, 0.4], [D4, 0.4], [C4, 0.8],
+                    [G3, 0.2], [G3, 0.2], [G4, 0.4], [E4, 0.4], [C4, 0.4], [B3, 0.4], [A3, 0.6],
+                    [F4, 0.2], [F4, 0.2], [E4, 0.4], [C4, 0.4], [D4, 0.4], [C4, 1.0]
+                ];
+
+                let time = ctx.currentTime + 0.1;
+                melody.forEach(note => {
+                    if (note[0] > 0) {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        osc.type = 'sine'; // やさしい音
+                        osc.frequency.setValueAtTime(note[0], time);
+
+                        gain.gain.setValueAtTime(0.15, time);
+                        gain.gain.exponentialRampToValueAtTime(0.001, time + note[1] - 0.05);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(time);
+                        osc.stop(time + note[1]);
+                    }
+                    time += note[1];
+                });
+            } catch(e) {
+                console.log("音声再生エラー", e);
+            }
+        }
+
         function startShow() {
-            // 最初に画面がタップされたタイミングでBGMを再生開始する
-            const bgm = document.getElementById('bgm');
-            bgm.play().catch(e => {
-                console.log("音声の自動再生がブロックされましたが、ユーザー操作により再生を試みました");
-            });
+            // タップと同時にハッピーバースデーを演奏開始
+            playHappyBirthday();
 
             const body = document.body;
             const box = document.getElementById('welcome-box');
@@ -426,9 +461,9 @@
             const boxGuide = document.getElementById('box-guide');
 
             boxTitle.innerHTML = `
-                <span>みどたん誕生日おめでとう！</span>
-                <span style="font-size: 1.1rem; margin-top: 8px;">いい一年にしてください！</span>
-                <span style="font-size: 1.1rem; margin-top: 4px;">これからもよろしくお願いします</span>
+                <span style="font-size: 1.2rem;">みどたん誕生日おめでとう！</span>
+                <span style="font-size: 1.0rem; margin-top: 6px;">いい一年にしてください！</span>
+                <span style="font-size: 1.0rem; margin-top: 4px;">これからもよろしくお願いします</span>
             `;
             boxGuide.innerText = '（おしまい）';
             box.onclick = () => {
