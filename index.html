@@ -156,6 +156,37 @@
             transform: translate(-50%, -50%) scale(0.2);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
+        /* しらすまんの降ってくる画像のスタイル（舌に落ちていく雨演出） */
+        .falling-image {
+            position: absolute;
+            top: -100px;
+            width: 80px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 25;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                /* 画面の一番下（舌のあたり）まで落ちる位置 */
+                transform: translateY(calc(100vh + 150px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -179,6 +210,14 @@
     </div>
 
     <script>
+        // 【重要】「shirasuman」フォルダの中にある実際の画像ファイル名をここに並べてね！
+        const shirasumanImages = [
+            'shirasuman/image1.jpg',
+            'shirasuman/image2.jpg',
+            'shirasuman/image3.jpg'
+            // 画像が増えたらここにファイル名を追加していってね！
+        ];
+
         function startShow() {
             const body = document.body;
             const box = document.getElementById('welcome-box');
@@ -259,21 +298,52 @@
                 // 白背景を元に戻す
                 body.classList.remove('white-bg');
 
-                // ちょっとしてから中央に「NEXT！」ボタンを出す
+                // ちょっとしてから中央に「NEXT！」ボタンを出す（ここをしらすまん雨モードに変更！）
                 setTimeout(() => {
-                    boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
-                    boxText.style.display = 'none'; // テキスト欄は非表示にしてスッキリさせる
-                    boxGuide.innerText = '👇 タップして次へ！';
+                    boxTitle.innerHTML = '<span>🐟 しらすまんの雨</span>';
+                    boxText.style.display = 'none'; // テキスト欄は非表示
+                    boxGuide.innerText = '👇 タップして画像を降らせる！';
                     
-                    // 次の処理用（後で変更可能）
+                    // NEXTボタンを押したらしらすまんの画像が上からザクザク降ってくるように設定！
                     box.onclick = function() {
-                        alert('次の演出はここに実装予定！');
+                        const dropCount = 6; // 一度に降らせる枚数
+                        for (let i = 0; i < dropCount; i++) {
+                            createFallingShirasuman();
+                        }
                     };
 
                     box.classList.remove('hide');
                 }, 500);
 
             }, 1000); // 1秒表示
+        }
+
+        // しらすまんの画像を上から下へ降らせる関数
+        function createFallingShirasuman() {
+            if (shirasumanImages.length === 0) return;
+
+            const img = document.createElement('img');
+            
+            // shirasuman配列からランダムに1枚選ぶ
+            const randomIndex = Math.floor(Math.random() * shirasumanImages.length);
+            img.src = shirasumanImages[randomIndex];
+            img.className = 'falling-image';
+
+            // 画面の横方向のランダムな位置に出現させる
+            const randomX = Math.random() * (window.innerWidth - 100);
+            img.style.left = randomX + 'px';
+
+            // 落ちるスピードをランダムにする（1.5秒〜3秒）
+            const duration = Math.random() * 1.5 + 1.5;
+            img.style.animationDuration = duration + 's';
+
+            // 画面に追加
+            document.body.appendChild(img);
+
+            // アニメーションが終わったら要素を削除してメモリを解放
+            setTimeout(() => {
+                img.remove();
+            }, duration * 1000);
         }
     </script>
 
