@@ -30,13 +30,13 @@
         .container {
             position: relative;
             z-index: 30;
-            padding: 25px 20px;
+            padding: 25px 15px;
             background: rgba(0, 0, 0, 0.85);
             border: 2px solid #9b59b6;
             box-shadow: 0 0 25px #2ecc71;
             border-radius: 15px;
-            width: 88%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 420px;
             cursor: pointer;
             box-sizing: border-box;
             transition: transform 0.1s, opacity 0.4s;
@@ -55,9 +55,10 @@
         h1 {
             color: #2ecc71;
             text-shadow: 0 0 10px #9b59b6;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin: 0 0 10px 0;
             line-height: 1.4;
+            word-break: break-all;
         }
 
         h1 span {
@@ -185,6 +186,11 @@
 </head>
 <body>
 
+    <!-- BGM（著作権フリーの明るいポップ・お祝い向け音源） -->
+    <audio id="bgm" loop preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-piano-496.mp3" type="audio/mp3">
+    </audio>
+
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
     <div id="challenge-btn" onclick="throwNikuman()">
@@ -262,6 +268,12 @@
         ];
 
         function startShow() {
+            // 最初に画面がタップされたタイミングでBGMを再生開始する
+            const bgm = document.getElementById('bgm');
+            bgm.play().catch(e => {
+                console.log("音声の自動再生がブロックされましたが、ユーザー操作により再生を試みました");
+            });
+
             const body = document.body;
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
@@ -415,8 +427,8 @@
 
             boxTitle.innerHTML = `
                 <span>みどたん誕生日おめでとう！</span>
-                <span style="font-size: 1.2rem; margin-top: 8px;">いい一年にしてください！</span>
-                <span style="font-size: 1.2rem; margin-top: 4px;">これからもよろしくお願いします</span>
+                <span style="font-size: 1.1rem; margin-top: 8px;">いい一年にしてください！</span>
+                <span style="font-size: 1.1rem; margin-top: 4px;">これからもよろしくお願いします</span>
             `;
             boxGuide.innerText = '（おしまい）';
             box.onclick = () => {
