@@ -304,14 +304,16 @@
                 setTimeout(() => {
                     boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
                     boxText.style.display = 'none';
-                    boxGuide.innerText = '👇 タップして画像を降らせる！';
+                    boxGuide.innerText = '👇 タップしてスタート！';
                     
-                    // NEXTボタンを押したら直接画像がザクザク降るように設定
+                    // ★ここを変更！NEXTボタンをタップした「瞬間」にボタンが消えて、自動で画像が雨のように降り出す！
                     box.onclick = function() {
-                        const dropCount = 6; // 一度に降る枚数
-                        for (let i = 0; i < dropCount; i++) {
+                        box.classList.add('hide'); // ボタンを綺麗に消す
+
+                        // 一定間隔で次々に画像を降らせるタイマーをスタート（例：0.2秒ごとにランダムで画像を生成）
+                        setInterval(() => {
                             createFallingImage();
-                        }
+                        }, 200);
                     };
 
                     box.classList.remove('hide');
