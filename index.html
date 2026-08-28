@@ -106,7 +106,7 @@
             bottom: 0;
         }
 
-        /* ぶどう・ミント・星のエフェクト用共通クラス */
+        /* エフェクト用共通クラス */
         .falling-item {
             position: absolute;
             pointer-events: none;
@@ -179,72 +179,37 @@
             
             box.classList.add('hide');
 
-            // 1. ぶどうが上からたくさん降ってきて下に溜まる演出 (約3秒間)
+            // 1. ぶどうが画面を埋め尽くすように大量に降ってきて下に溜まる演出 (約2.5秒間)
             let grapeInterval = setInterval(() => {
-                let grape = document.createElement('div');
-                grape.classList.add('falling-item');
-                grape.innerHTML = '🍇';
-                grape.style.fontSize = (Math.random() * 20 + 25) + 'px';
-                grape.style.left = Math.random() * (window.innerWidth - 50) + 'px';
-                grape.style.top = '-50px';
-                
-                // 下にランダムに積もる位置 (画面の下部付近)
-                let stopY = window.innerHeight - (Math.random() * 120 + 20);
-                let duration = Math.random() * 1 + 1.5;
+                // 1回に複数のぶどうを降らせて画面を素早く埋め尽くす
+                for(let i = 0; i < 4; i++) {
+                    let grape = document.createElement('div');
+                    grape.classList.add('falling-item');
+                    grape.innerHTML = '🍇';
+                    grape.style.fontSize = (Math.random() * 25 + 30) + 'px';
+                    grape.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+                    grape.style.top = '-60px';
+                    
+                    // 下から積み重なるようにランダムな位置に停止
+                    let stopY = window.innerHeight - (Math.random() * window.innerHeight * 0.75 + 10);
+                    let duration = Math.random() * 0.8 + 1.0;
 
-                grape.style.transition = `top ${duration}s ease-in, transform ${duration}s ease-in`;
-                document.body.appendChild(grape);
+                    grape.style.transition = `top ${duration}s ease-in, transform ${duration}s ease-in`;
+                    document.body.appendChild(grape);
 
-                setTimeout(() => {
-                    grape.style.top = stopY + 'px';
-                    grape.style.transform = `rotate(${Math.random() * 360}deg)`;
-                }, 50);
+                    setTimeout(() => {
+                        grape.style.top = stopY + 'px';
+                        grape.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    }, 50);
 
-                // 積もったあとに消えないように残しつつ、後で一括消去できるようにクラスを付与
-                grape.classList.add('stacked-grape');
+                    grape.classList.add('stacked-grape');
+                }
+            }, 50);
 
-                setTimeout(() => {
-                    // 落ちた後の微調整
-                }, duration * 1000);
-            }, 100);
-
-            // 3秒後にぶどうをストップし、ハート型の星を散らばせる
+            // 2. 2.5秒後にぶどうの追加を止め、画面が埋まった状態から一気に立ち絵＆白背景に切り替える
             setTimeout(() => {
                 clearInterval(grapeInterval);
 
-                // ハート型の星を散らばせる
-                for (let i = 0; i < 40; i++) {
-                    let star = document.createElement('div');
-                    star.classList.add('falling-item');
-                    star.innerHTML = Math.random() > 0.5 ? '💖' : '⭐';
-                    star.style.fontSize = (Math.random() * 15 + 20) + 'px';
-                    
-                    // ハートの数式配置 (ざっくりハート型になるように計算)
-                    let t = Math.random() * Math.PI * 2;
-                    let hx = 16 * Math.pow(Math.sin(t), 3);
-                    let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                    
-                    let centerX = window.innerWidth / 2;
-                    let centerY = window.innerHeight / 2;
-                    
-                    star.style.left = (centerX + hx * 12) + 'px';
-                    star.style.top = (centerY + hy * 12) + 'px';
-                    star.style.transition = 'all 1.5s ease-out';
-                    
-                    document.body.appendChild(star);
-
-                    setTimeout(() => {
-                        star.style.transform = `translate(${(Math.random() - 0.5) * 300}px, ${(Math.random() - 0.5) * 300}px) scale(1.5)`;
-                        star.style.opacity = '0';
-                    }, 50);
-
-                    setTimeout(() => star.remove(), 1500);
-                }
-
-            }, 3000);
-
-            // 4.5秒後：画面を白くして、立ち絵を出して、ミントをぶん投げる！
-            setTimeout(() => {
                 // 溜まったぶどうを消す
                 document.querySelectorAll('.stacked-grape').forEach(g => g.remove());
 
@@ -252,14 +217,13 @@
                 body.classList.add('white-bg');
                 midori.classList.add('show');
 
-                // ミントをぶん投げる演出 (葉っぱやハーブの絵文字 🌿)
+                // 3. ミントをぶん投げる演出 (🌿)
                 for (let i = 0; i < 25; i++) {
                     let mint = document.createElement('div');
                     mint.classList.add('falling-item');
                     mint.innerHTML = '🌿';
                     mint.style.fontSize = (Math.random() * 25 + 25) + 'px';
                     
-                    // 画面の中央（立ち絵のあたり）から四方八方にぶっ飛ぶ
                     mint.style.left = '50%';
                     mint.style.top = '50%';
 
@@ -274,7 +238,7 @@
                     setTimeout(() => mint.remove(), 800);
                 }
 
-            }, 4500);
+            }, 2500);
         }
     </script>
 
