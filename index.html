@@ -114,11 +114,66 @@
             user-select: none;
             transition: top 0.4s linear, transform 0.4s linear;
         }
+
+        /* 「チャレンジ！」ボタン（立ち絵登場後に画面上部に出現） */
+        #challenge-btn {
+            position: absolute;
+            top: 15vh;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            color: #9b59b6;
+            border: 3px solid #2ecc71;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.1s;
+        }
+        
+        #challenge-btn:active {
+            box-shadow: 0 0 5px rgba(255, 0, 255, 0.8);
+        }
+
+        #challenge-btn.show {
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* 肉まん画像（IMG_3896.png を指定） */
+        #nikuman {
+            position: absolute;
+            z-index: 60;
+            width: 150px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease-out;
+        }
+
+        /* 肉まんがぶつかるアニメーション */
+        @keyframes hitFace {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(10deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
 
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
+    
+    <!-- タップしたら肉まんが飛んでくるボタン -->
+    <div id="challenge-btn" onclick="throwNikuman()">！ チャレンジ！（タップ）</div>
+
+    <!-- 肉まん画像（IMG_3896.png を指定） -->
+    <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1>
@@ -134,51 +189,73 @@
             const body = document.body;
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
+            const challengeBtn = document.getElementById('challenge-btn');
             
             box.classList.add('hide');
 
             // ぶどうを爆速・大量発生させて画面を一瞬で埋め尽くす (約1.5秒間)
             let grapeTimer = 0;
             let grapeInterval = setInterval(() => {
-                // 1回につき15個のぶどうを画面全体のランダムな位置に一気に降らせる
                 for(let i = 0; i < 15; i++) {
                     let grape = document.createElement('div');
                     grape.classList.add('falling-grape');
                     grape.innerHTML = '🍇';
-                    grape.style.fontSize = (Math.random() * 30 + 35) + 'px'; // 大きめサイズ
+                    grape.style.fontSize = (Math.random() * 30 + 35) + 'px';
                     
                     let startX = Math.random() * window.innerWidth;
-                    let stopY = Math.random() * window.innerHeight; // 画面の至るところに散らばる
+                    let stopY = Math.random() * window.innerHeight;
 
                     grape.style.left = startX + 'px';
                     grape.style.top = '-80px';
                     
                     document.body.appendChild(grape);
 
-                    // 爆速で落ちて画面全体を埋める
                     setTimeout(() => {
                         grape.style.top = stopY + 'px';
                         grape.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 1})`;
                     }, 20);
 
-                    // 後で一括消去するためのクラス
                     grape.classList.add('all-grapes');
                 }
 
                 grapeTimer += 50;
 
-                // 1.2秒経ったらぶどうの発生を止め、画面を真っ白にして立ち絵を出す
+                // 1.2秒経ったらぶどうを消して立ち絵とチャレンジボタンを出す
                 if (grapeTimer >= 1200) {
                     clearInterval(grapeInterval);
 
-                    // ぶどうを一斉に消す
                     document.querySelectorAll('.all-grapes').forEach(g => g.remove());
 
-                    // 背景を真っ白にして立ち絵登場！
                     body.classList.add('white-bg');
                     midori.classList.add('show');
+
+                    setTimeout(() => {
+                        challengeBtn.classList.add('show');
+                    }, 800);
                 }
             }, 50);
+        }
+
+        // チャレンジボタンを押したとき：肉まんを顔面にぶん投げる！
+        function throwNikuman() {
+            const nikuman = document.getElementById('nikuman');
+            const midori = document.getElementById('midori-chan');
+            
+            const rect = midori.getBoundingClientRect();
+            const faceX = rect.left + rect.width * 0.5;
+            const faceY = rect.top + rect.height * 0.3;
+
+            nikuman.style.left = faceX + 'px';
+            nikuman.style.top = faceY + 'px';
+
+            nikuman.style.animation = 'hitFace 0.3s ease-out forwards';
+
+            document.getElementById('challenge-btn').classList.remove('show');
+            
+            setTimeout(() => {
+                nikuman.style.animation = '';
+                nikuman.style.opacity = '0';
+            }, 500);
         }
     </script>
 
