@@ -157,15 +157,16 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像（幅を画面の約28%にして、横3列できれいに画面が埋まる大きさに固定） */
+        /* 降ってくる画像（目に優しいふんわり半透明＆大きめサイズ） */
         .falling-image {
             position: absolute;
-            top: -300px;
-            width: 28vw; 
-            max-width: 140px;
+            top: -350px;
+            width: 35vw; 
+            max-width: 170px;
             height: auto;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            opacity: 0.85; /* 少し透過させて目に優しくする */
             animation: fallOnly linear forwards;
             pointer-events: none;
             z-index: 25;
@@ -177,13 +178,13 @@
                 opacity: 0;
             }
             10% {
-                opacity: 1;
+                opacity: 0.85;
             }
             90% {
-                opacity: 1;
+                opacity: 0.85;
             }
             100% {
-                transform: translateY(calc(100vh + 350px));
+                transform: translateY(calc(100vh + 400px));
                 opacity: 0;
             }
         }
@@ -318,24 +319,16 @@
             }, 1000);
         }
 
-        // 38枚を必ず【完全に固定された横3列（左・中・右）のレーン】だけで降らせる関数
+        // ゆっくり、落ち着いて見られるスピードで降らせる関数
         function runShirasumanRain() {
             let index = 0;
             let screenWidth = window.innerWidth;
-            
-            // 画面をきっちり3等分したレーンの中心X座標をあらかじめ計算
             const laneWidth = screenWidth / 3;
-            const xPositions = [
-                laneWidth * 0.5 - 70, // 左レーンの中央
-                laneWidth * 1.5 - 70, // 中レーンの中央
-                laneWidth * 2.5 - 70  // 右レーンの中央
-            ];
 
             let rainInterval = setInterval(() => {
                 if (index < shirasumanImages.length) {
-                    // 順番に 0(左) → 1(中) → 2(右) → 0(左)... と綺麗に割り振る
-                    let laneIndex = index % 3;
-                    let xPos = xPositions[laneIndex];
+                    let lane = index % 3;
+                    let xPos = lane * laneWidth + (laneWidth - 150) / 2 + (Math.random() * 30 - 15);
 
                     createSingleImage(shirasumanImages[index], xPos);
                     index++;
@@ -345,19 +338,19 @@
                     // 全て降り終わったあとに「NEXT！」ボタンを表示
                     setTimeout(() => {
                         showNextButton();
-                    }, 2500);
+                    }, 3800);
                 }
-            }, 250); 
+            }, 220); // 少しテンポをマイルドに調整
         }
 
-        // 指定した位置（綺麗に整列した3列のどこか）からまっすぐ降らせる関数
+        // 画像をゆっくり降らせる関数（スピードを3.5秒にして目に優しく）
         function createSingleImage(imageSrc, xPos) {
             const img = document.createElement('img');
             img.src = imageSrc;
             img.className = 'falling-image';
             img.style.left = xPos + 'px';
 
-            const duration = 2.4; 
+            const duration = 3.5; // 落ちるスピードをゆっくりに（3.5秒）
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
