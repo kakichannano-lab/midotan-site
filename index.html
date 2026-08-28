@@ -182,9 +182,23 @@
                 opacity: 0;
             }
         }
+
+        /* YouTubeプレイヤーを隠す用（音だけ流す） */
+        #youtube-player-container {
+            position: absolute;
+            bottom: -100px;
+            left: 0;
+            opacity: 0.01;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
+
+    <!-- 嵐 Daylight のYouTube埋め込み -->
+    <div id="youtube-player-container">
+        <div id="player"></div>
+    </div>
 
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
@@ -202,6 +216,27 @@
         </h1>
         <div class="tap-guide" id="box-guide">（タップ）</div>
     </div>
+
+    <!-- YouTube IFrame API の読み込み -->
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: 'xU8ZaF_ym0I', // Daylightの動画ID
+                playerVars: {
+                    'loop': 1,
+                    'playlist': 'xU8ZaF_ym0I' // ループ再生させるため
+                }
+            });
+        }
+    </script>
 
     <script>
         // 【1】スタート直後に流す約38件の画像リスト
@@ -262,52 +297,11 @@
             'IMG_4851.JPG', 'IMG_4818.JPG'
         ];
 
-        // ハッピーバースデーのメロディを鳴らす関数（Web Audio API）
-        function playHappyBirthday() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-
-                // 音階の周波数 (Hz)
-                const G3 = 196.00, A3 = 220.00, B3 = 246.94, C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, C5 = 523.25;
-
-                // メロディの楽譜 [周波数, 長さ(秒)]
-                const melody = [
-                    [G3, 0.2], [G3, 0.2], [A3, 0.4], [G3, 0.4], [C4, 0.4], [B3, 0.8],
-                    [G3, 0.2], [G3, 0.2], [A3, 0.4], [G3, 0.4], [D4, 0.4], [C4, 0.8],
-                    [G3, 0.2], [G3, 0.2], [G4, 0.4], [E4, 0.4], [C4, 0.4], [B3, 0.4], [A3, 0.6],
-                    [F4, 0.2], [F4, 0.2], [E4, 0.4], [C4, 0.4], [D4, 0.4], [C4, 1.0]
-                ];
-
-                let time = ctx.currentTime + 0.1;
-                melody.forEach(note => {
-                    if (note[0] > 0) {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        
-                        osc.type = 'sine'; // やさしい音
-                        osc.frequency.setValueAtTime(note[0], time);
-
-                        gain.gain.setValueAtTime(0.15, time);
-                        gain.gain.exponentialRampToValueAtTime(0.001, time + note[1] - 0.05);
-
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-
-                        osc.start(time);
-                        osc.stop(time + note[1]);
-                    }
-                    time += note[1];
-                });
-            } catch(e) {
-                console.log("音声再生エラー", e);
-            }
-        }
-
         function startShow() {
-            // タップと同時にハッピーバースデーを演奏開始
-            playHappyBirthday();
+            // 最初の画面をタップした瞬間にYouTubeの再生をスタートする
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
 
             const body = document.body;
             const box = document.getElementById('welcome-box');
