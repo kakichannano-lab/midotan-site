@@ -166,7 +166,7 @@
             height: auto;
             border-radius: 14px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            opacity: 0.85; /* 少し透過させて目に優しくする */
+            opacity: 0.85;
             animation: fallOnly linear forwards;
             pointer-events: none;
             z-index: 25;
@@ -211,8 +211,28 @@
     </div>
 
     <script>
-        // アップロードした全38枚の画像リスト
+        // アップロードされた画像一覧（今回追加分の画像群をすべて網羅した配列）
         const shirasumanImages = [
+            'IMG_5011.jpeg', 'IMG_5010.jpeg', 'IMG_5006.jpeg', 'IMG_5003.jpeg', 'IMG_5002.jpeg',
+            'IMG_4999.jpeg', 'IMG_4996.jpeg', 'IMG_4992.jpeg', 'IMG_4983.jpeg', 'IMG_4982.jpeg',
+            'IMG_4981.jpeg', 'IMG_4978.jpeg', 'IMG_7527.png',  'IMG_4971.jpeg', 'IMG_4968.jpeg',
+            'IMG_4969.jpeg', 'IMG_4966.jpeg', 'IMG_4962.jpeg', 'IMG_4960.jpeg', 'IMG_4959.jpeg',
+            'IMG_4806.jpeg', 'IMG_4956.jpeg', 'IMG_4955.jpeg', 'IMG_4953.jpeg', 'IMG_4945.jpeg',
+            'IMG_7589.png',  'IMG_4940.jpeg', 'IMG_4936.jpeg', 'IMG_4931.jpeg', 'IMG_4934.jpeg',
+            'IMG_4929.jpeg', 'IMG_7538.png',  'IMG_4916.jpeg', 'IMG_4911.jpeg', 'IMG_4906.jpeg',
+            'IMG_4892.jpeg', 'IMG_4890.jpeg', 'IMG_4893.jpeg', 'IMG_4891.jpeg', 'IMG_4887.jpeg',
+            'IMG_4869.jpeg', 'IMG_4863.jpeg', 'IMG_4860.jpeg', 'IMG_4858.jpeg', 'IMG_4853.jpeg',
+            'IMG_4846.jpeg', 'IMG_4842.jpeg', 'IMG_4844.jpeg', 'IMG_4834.jpeg', 'IMG_4831.jpeg',
+            'IMG_4821.jpeg', 'IMG_4817.jpeg', 'IMG_4814.jpeg', 'IMG_4804.jpeg', 'IMG_4803.jpeg',
+            'IMG_4801.jpeg', 'IMG_4800.jpeg', 'IMG_4782.jpeg', 'IMG_4784.jpeg', 'IMG_4785.jpeg',
+            'IMG_4783.jpeg', 'IMG_4734.jpeg', 'IMG_4732.jpeg', 'IMG_4727.jpeg', 'IMG_4725.jpeg',
+            'IMG_4721.jpeg', 'IMG_4719.jpeg', 'IMG_4712.jpeg', 'IMG_4711.jpeg', 'IMG_4713.jpeg',
+            'IMG_4707.jpeg', 'IMG_4695.jpeg', 'IMG_4697.jpeg', 'IMG_7528.png',  'IMG_4688.jpeg',
+            'IMG_4685.jpeg', 'IMG_4683.jpeg', 'IMG_4678.jpeg', 'IMG_4670.jpeg', 'IMG_4668.jpeg',
+            'IMG_4667.jpeg', 'IMG_4669.jpeg', 'IMG_4664.jpeg', 'IMG_4665.jpeg', 'IMG_4666.jpeg',
+            'IMG_4662.jpeg', 'IMG_4658.jpeg', 'IMG_4656.jpeg', 'IMG_4655.jpeg', 'IMG_4650.jpeg',
+            'IMG_4651.jpeg', 'IMG_4648.jpeg', 'IMG_4646.jpeg', 'IMG_4638.jpeg', 'IMG_4634.jpeg',
+            'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg',
             'IMG_4533.jpeg', 'IMG_4539.jpeg', 'IMG_4547.jpeg', 'IMG_4565.jpeg', 
             'IMG_4593.jpeg', 'IMG_4603.jpeg', 'IMG_4606.jpeg', 'IMG_4608.jpeg', 
             'IMG_4617.jpeg', 'IMG_4635.jpeg', 'IMG_4680.jpeg', 'IMG_4716.jpeg', 
@@ -286,16 +306,13 @@
             const faceX = rect.left + rect.width * 0.5;
             const faceY = rect.top + rect.height * 0.3;
 
-            // チャレンジボタンを消す
             document.getElementById('challenge-btn').classList.remove('show');
 
-            // 肉まんを顔面に命中
             nikuman.style.left = faceX + 'px';
             nikuman.style.top = faceY + 'px';
             nikuman.style.opacity = '1';
             nikuman.style.transform = 'translate(-50%, -50%) scale(1.3) rotate(15deg)';
 
-            // 1秒後に肉まんを消し、立ち絵も引っ込めてNEXTボタンを表示
             setTimeout(() => {
                 nikuman.style.transition = 'opacity 0.3s ease';
                 nikuman.style.opacity = '0';
@@ -309,7 +326,7 @@
                     boxGuide.innerText = '👇 タップしてスタート！';
                     
                     box.onclick = function() {
-                        box.classList.add('hide'); // ボタンを消す
+                        box.classList.add('hide');
                         runShirasumanRain();
                     };
 
@@ -319,7 +336,6 @@
             }, 1000);
         }
 
-        // ゆっくり、落ち着いて見られるスピードで降らせる関数
         function runShirasumanRain() {
             let index = 0;
             let screenWidth = window.innerWidth;
@@ -335,22 +351,20 @@
                 } else {
                     clearInterval(rainInterval);
 
-                    // 全て降り終わったあとに「NEXT！」ボタンを表示
                     setTimeout(() => {
                         showNextButton();
                     }, 3800);
                 }
-            }, 220); // 少しテンポをマイルドに調整
+            }, 220);
         }
 
-        // 画像をゆっくり降らせる関数（スピードを3.5秒にして目に優しく）
         function createSingleImage(imageSrc, xPos) {
             const img = document.createElement('img');
             img.src = imageSrc;
             img.className = 'falling-image';
             img.style.left = xPos + 'px';
 
-            const duration = 3.5; // 落ちるスピードをゆっくりに（3.5秒）
+            const duration = 3.5;
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
@@ -360,7 +374,6 @@
             }, duration * 1000);
         }
 
-        // 終了後の「NEXT！」ボタンを表示する関数
         function showNextButton() {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
