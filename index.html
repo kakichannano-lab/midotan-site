@@ -157,14 +157,15 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像のスタイル（回転なし・すっきり落下） */
+        /* 降ってくる画像（幅を画面の約28%にして、横3列できれいに画面が埋まる大きさに固定） */
         .falling-image {
             position: absolute;
-            top: -120px;
-            width: 80px;
+            top: -300px;
+            width: 28vw; 
+            max-width: 140px;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             animation: fallOnly linear forwards;
             pointer-events: none;
             z-index: 25;
@@ -182,7 +183,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(calc(100vh + 150px));
+                transform: translateY(calc(100vh + 350px));
                 opacity: 0;
             }
         }
@@ -306,7 +307,6 @@
                     boxText.style.display = 'none';
                     boxGuide.innerText = '👇 タップしてスタート！';
                     
-                    // NEXTボタンを押したら、38枚を順番通りに降らせて、終わったら次のNEXTボタンを出す仕組み
                     box.onclick = function() {
                         box.classList.add('hide'); // ボタンを消す
                         runShirasumanRain();
@@ -318,37 +318,46 @@
             }, 1000);
         }
 
-        // 38枚を全部順番に（または被りなしで）1回ずつ降らせて、終わったらNEXTボタンを復活させる関数
+        // 38枚を必ず【完全に固定された横3列（左・中・右）のレーン】だけで降らせる関数
         function runShirasumanRain() {
             let index = 0;
-            // 38枚を順番に綺麗に並べるためのシャッフル（またはそのまま）
-            // ここでは綺麗に全種類が出るように順番に流します
+            let screenWidth = window.innerWidth;
+            
+            // 画面をきっちり3等分したレーンの中心X座標をあらかじめ計算
+            const laneWidth = screenWidth / 3;
+            const xPositions = [
+                laneWidth * 0.5 - 70, // 左レーンの中央
+                laneWidth * 1.5 - 70, // 中レーンの中央
+                laneWidth * 2.5 - 70  // 右レーンの中央
+            ];
+
             let rainInterval = setInterval(() => {
                 if (index < shirasumanImages.length) {
-                    createSingleImage(shirasumanImages[index]);
+                    // 順番に 0(左) → 1(中) → 2(右) → 0(左)... と綺麗に割り振る
+                    let laneIndex = index % 3;
+                    let xPos = xPositions[laneIndex];
+
+                    createSingleImage(shirasumanImages[index], xPos);
                     index++;
                 } else {
-                    clearInterval(rainInterval); // 38枚すべて降り終わったらタイマー停止
+                    clearInterval(rainInterval);
 
-                    // 最後の画像が下に落ちきる少し後に、新しいNEXTボタンを表示する
+                    // 全て降り終わったあとに「NEXT！」ボタンを表示
                     setTimeout(() => {
-                        showNextStageButton();
-                    }, 2000);
+                        showNextButton();
+                    }, 2500);
                 }
-            }, 180); // 0.18秒ごとに1枚ずつ発射
+            }, 250); 
         }
 
-        // 1枚の画像を上から下へ（回転なしで）降らせる関数
-        function createSingleImage(imageSrc) {
+        // 指定した位置（綺麗に整列した3列のどこか）からまっすぐ降らせる関数
+        function createSingleImage(imageSrc, xPos) {
             const img = document.createElement('img');
             img.src = imageSrc;
             img.className = 'falling-image';
+            img.style.left = xPos + 'px';
 
-            // 画面の横幅いっぱいにバラバラの位置で配置
-            const randomX = Math.random() * (window.innerWidth - 100);
-            img.style.left = randomX + 'px';
-
-            const duration = 2.0; // 落ちるスピード（秒）
+            const duration = 2.4; 
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
@@ -358,18 +367,17 @@
             }, duration * 1000);
         }
 
-        // 38枚が終わったあとに次のNEXTボタンを表示する関数
-        function showNextStageButton() {
+        // 終了後の「NEXT！」ボタンを表示する関数
+        function showNextButton() {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
             const boxGuide = document.getElementById('box-guide');
 
-            boxTitle.innerHTML = '<span>🎉 次のステージへ！</span>';
+            boxTitle.innerHTML = '<span>🚀 NEXT！</span>';
             boxGuide.innerText = '👇 タップして次へ！';
             
-            // 次の機能（次のジャンル用など）へ繋げる場所
             box.onclick = function() {
-                alert('次のジャンルへ進みます！（ここに次の処理を書けます）');
+                alert('次のNEXTへ進みます！');
             };
 
             box.classList.remove('hide');
