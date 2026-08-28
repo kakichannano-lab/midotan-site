@@ -55,37 +55,9 @@
         h1 {
             color: #2ecc71;
             text-shadow: 0 0 10px #9b59b6;
-            font-size: 1.5rem;
-            margin: 0 0 12px 0;
+            font-size: 1.8rem;
+            margin: 0;
             line-height: 1.4;
-        }
-
-        h1 span {
-            display: block;
-        }
-
-        p {
-            color: #e0e0e0;
-            font-size: 0.95rem;
-            margin: 0 0 18px 0;
-            line-height: 1.5;
-        }
-
-        .tap-guide {
-            font-size: 0.85rem;
-            color: #2ecc71;
-            background: rgba(46, 204, 113, 0.15);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px dashed #2ecc71;
-            animation: pulseText 1.5s infinite;
-        }
-
-        @keyframes pulseText {
-            0% { opacity: 0.4; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.4; transform: scale(0.95); }
         }
 
         /* 立ち絵スタイル */
@@ -157,16 +129,16 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像（サイズを大きくし、隙間を減らす） */
+        /* 降ってくる画像（元のゆったりした3列配置に戻す） */
         .falling-image {
             position: absolute;
-            top: -400px;
-            width: 42vw; 
-            max-width: 210px;
+            top: -350px;
+            width: 32vw; 
+            max-width: 160px;
             height: auto;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            opacity: 0.9;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            opacity: 0.85;
             animation: fallOnly linear forwards;
             pointer-events: none;
             z-index: 25;
@@ -177,14 +149,14 @@
                 transform: translateY(0);
                 opacity: 0;
             }
-            8% {
-                opacity: 0.9;
+            10% {
+                opacity: 0.85;
             }
-            92% {
-                opacity: 0.9;
+            90% {
+                opacity: 0.85;
             }
             100% {
-                transform: translateY(calc(100vh + 500px));
+                transform: translateY(calc(100vh + 400px));
                 opacity: 0;
             }
         }
@@ -200,14 +172,9 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 最初およびキラキラNEXT用のコンテナ -->
+    <!-- 最初およびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
-        <h1 id="box-title">
-            <span>🎉 みどたん誕生日</span>
-            <span>おめでとう！ 💜</span>
-        </h1>
-        <p id="box-text">いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
-        <div class="tap-guide" id="box-guide">👇 タップしてお祝い！</div>
+        <h1 id="box-title">スタート！</h1>
     </div>
 
     <script>
@@ -303,8 +270,6 @@
             const midori = document.getElementById('midori-chan');
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
-            const boxText = document.getElementById('box-text');
-            const boxGuide = document.getElementById('box-guide');
             
             const rect = midori.getBoundingClientRect();
             const faceX = rect.left + rect.width * 0.5;
@@ -325,17 +290,15 @@
                 body.classList.remove('white-bg');
 
                 setTimeout(() => {
-                    boxTitle.innerHTML = '<span>🚀 スタート！</span>';
-                    boxText.style.display = 'none';
-                    boxGuide.innerText = '👇 タップして最初の画像たちを流す！';
+                    boxTitle.innerText = 'NEXT！';
                     
                     box.onclick = function() {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            showNextButton("🚀 NEXT！", "👇 タップしてメインの写真たちを流す！", () => {
+                            showNextButton("NEXT！", () => {
                                 box.classList.add('hide');
                                 runImageRain(photoList, () => {
-                                    showNextButton("🎉 完了！", "👇 すべて終了しました！", () => {
+                                    showNextButton("完了！", () => {
                                         alert('お疲れ様でした！');
                                     });
                                 });
@@ -349,15 +312,16 @@
             }, 1000);
         }
 
-        // 画像の隙間を埋めるため、出現間隔を短く(160ms)、ランダムな位置にバラして降らせる関数
+        // 元のゆったりした3列レーン配置に戻す関数
         function runImageRain(imageList, onComplete) {
             let index = 0;
             let screenWidth = window.innerWidth;
+            const laneWidth = screenWidth / 3;
 
             let rainInterval = setInterval(() => {
                 if (index < imageList.length) {
-                    // 画面の左右ランダムな位置から落とすことで隙間をシャッフルして埋める
-                    let xPos = Math.random() * (screenWidth - 200);
+                    let lane = index % 3;
+                    let xPos = lane * laneWidth + (laneWidth - 140) / 2 + (Math.random() * 20 - 10);
 
                     createSingleImage(imageList[index], xPos);
                     index++;
@@ -366,9 +330,9 @@
 
                     setTimeout(() => {
                         if (onComplete) onComplete();
-                    }, 3500);
+                    }, 3800);
                 }
-            }, 160); // 出現スピードを少し速くして密度をアップ
+            }, 220);
         }
 
         function createSingleImage(imageSrc, xPos) {
@@ -377,7 +341,7 @@
             img.className = 'falling-image';
             img.style.left = xPos + 'px';
 
-            const duration = 3.0; // 落下速度も少し調整
+            const duration = 3.5;
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
@@ -387,14 +351,11 @@
             }, duration * 1000);
         }
 
-        function showNextButton(titleText, guideText, onClickCallback) {
+        function showNextButton(text, onClickCallback) {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
-            const boxGuide = document.getElementById('box-guide');
 
-            boxTitle.innerHTML = `<span>${titleText}</span>`;
-            boxGuide.innerText = guideText;
-            
+            boxTitle.innerText = text;
             box.onclick = onClickCallback;
             box.classList.remove('hide');
         }
