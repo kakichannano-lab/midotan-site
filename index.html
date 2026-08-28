@@ -55,7 +55,7 @@
         h1 {
             color: #2ecc71;
             text-shadow: 0 0 10px #9b59b6;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             margin: 0 0 10px 0;
             line-height: 1.4;
         }
@@ -241,7 +241,7 @@
             'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg'
         ];
 
-        // 【3】最後（いちばん高いギフト）の画像リスト（画像から抽出）
+        // 【3】最後（いちばん高いギフト）の画像リスト
         const giftList = [
             'IMG_4572.JPG', 'IMG_4583.JPG', 'IMG_4605.JPG', 'IMG_4644.JPG',
             'IMG_4618.JPG', 'IMG_4619.JPG', 'IMG_4633.JPG', 'IMG_4631.JPG',
@@ -346,10 +346,8 @@
                                     showNextButton("NEXT", () => {
                                         box.classList.add('hide');
                                         runImageRain(giftList, () => {
-                                            // すべて終わったあと
-                                            showNextButton("完了！", () => {
-                                                alert('お疲れ様でした！');
-                                            });
+                                            // すべて終わったあとのメッセージ
+                                            showFinalMessage();
                                         });
                                     });
                                 });
@@ -407,6 +405,23 @@
             boxTitle.innerText = text;
             boxGuide.innerText = '（タップ）';
             box.onclick = onClickCallback;
+            box.classList.remove('hide');
+        }
+
+        function showFinalMessage() {
+            const box = document.getElementById('welcome-box');
+            const boxTitle = document.getElementById('box-title');
+            const boxGuide = document.getElementById('box-guide');
+
+            boxTitle.innerHTML = `
+                <span>みどたん誕生日おめでとう！</span>
+                <span style="font-size: 1.2rem; margin-top: 8px;">いい一年にしてください！</span>
+                <span style="font-size: 1.2rem; margin-top: 4px;">これからもよろしくお願いします</span>
+            `;
+            boxGuide.innerText = '（おしまい）';
+            box.onclick = () => {
+                alert('お疲れ様でした！');
+            };
             box.classList.remove('hide');
         }
     </script>
