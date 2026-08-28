@@ -55,9 +55,30 @@
         h1 {
             color: #2ecc71;
             text-shadow: 0 0 10px #9b59b6;
-            font-size: 1.8rem;
-            margin: 0;
+            font-size: 1.6rem;
+            margin: 0 0 10px 0;
             line-height: 1.4;
+        }
+
+        h1 span {
+            display: block;
+        }
+
+        .tap-guide {
+            font-size: 0.9rem;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px dashed #2ecc71;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
         }
 
         /* 立ち絵スタイル */
@@ -129,7 +150,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像（元のゆったりした3列配置に戻す） */
+        /* 降ってくる画像（ゆったりした3列配置） */
         .falling-image {
             position: absolute;
             top: -350px;
@@ -174,7 +195,11 @@
 
     <!-- 最初およびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
-        <h1 id="box-title">スタート！</h1>
+        <h1 id="box-title">
+            <span>みどたん誕生日</span>
+            <span>おめでとう！</span>
+        </h1>
+        <div class="tap-guide" id="box-guide">（タップ）</div>
     </div>
 
     <script>
@@ -269,7 +294,6 @@
             const nikuman = document.getElementById('nikuman');
             const midori = document.getElementById('midori-chan');
             const box = document.getElementById('welcome-box');
-            const boxTitle = document.getElementById('box-title');
             
             const rect = midori.getBoundingClientRect();
             const faceX = rect.left + rect.width * 0.5;
@@ -290,29 +314,24 @@
                 body.classList.remove('white-bg');
 
                 setTimeout(() => {
-                    boxTitle.innerText = 'NEXT！';
-                    
-                    box.onclick = function() {
+                    showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            showNextButton("NEXT！", () => {
+                            showNextButton("NEXT", () => {
                                 box.classList.add('hide');
                                 runImageRain(photoList, () => {
-                                    showNextButton("完了！", () => {
+                                    showNextButton("NEXT", () => {
                                         alert('お疲れ様でした！');
                                     });
                                 });
                             });
                         });
-                    };
-
-                    box.classList.remove('hide');
+                    });
                 }, 500);
 
             }, 1000);
         }
 
-        // 元のゆったりした3列レーン配置に戻す関数
         function runImageRain(imageList, onComplete) {
             let index = 0;
             let screenWidth = window.innerWidth;
@@ -354,8 +373,10 @@
         function showNextButton(text, onClickCallback) {
             const box = document.getElementById('welcome-box');
             const boxTitle = document.getElementById('box-title');
+            const boxGuide = document.getElementById('box-guide');
 
             boxTitle.innerText = text;
+            boxGuide.innerText = '（タップ）';
             box.onclick = onClickCallback;
             box.classList.remove('hide');
         }
