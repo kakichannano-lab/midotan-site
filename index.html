@@ -19,14 +19,14 @@
             justify-content: center;
             text-align: center;
             position: relative;
-            transition: background 0.3s ease;
+            transition: background 0.4s ease;
         }
 
         body.white-bg {
             background: #ffffff !important;
         }
 
-        /* 最初に出るお祝いボタン */
+        /* 最初や次のコンテンツへ進むボタン */
         .container {
             position: relative;
             z-index: 30;
@@ -98,12 +98,14 @@
             max-width: 100vw;
             z-index: 10;
             pointer-events: none;
-            transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: bottom 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease;
             mix-blend-mode: multiply;
+            opacity: 0;
         }
 
         #midori-chan.show {
             bottom: 0;
+            opacity: 1;
         }
 
         /* ぶどう用クラス */
@@ -115,7 +117,7 @@
             transition: top 0.4s linear, transform 0.4s linear;
         }
 
-        /* 「チャレンジ！」ボタン（顔を避けて画面の右上あたりに配置） */
+        /* 「チャレンジ！」ボタン（右上） */
         #challenge-btn {
             position: absolute;
             top: 25px;
@@ -160,21 +162,19 @@
 
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
-    <!-- タップしたら肉まんが飛んでくるボタン（改行指定） -->
     <div id="challenge-btn" onclick="throwNikuman()">
         チャレンジ！<br>（タップ）
     </div>
 
-    <!-- 肉まん画像（IMG_3896.png） -->
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
     <div class="container" id="welcome-box" onclick="startShow()">
-        <h1>
+        <h1 id="box-title">
             <span>🎉 みどたん誕生日</span>
             <span>おめでとう！ 💜</span>
         </h1>
-        <p>いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
-        <div class="tap-guide">👇 タップしてお祝い！</div>
+        <p id="box-text">いつも最高の配信をありがとう！<br>最高の1年になりますように！</p>
+        <div class="tap-guide" id="box-guide">👇 タップしてお祝い！</div>
     </div>
 
     <script>
@@ -226,29 +226,53 @@
             }, 50);
         }
 
-        // チャレンジボタンを押したとき：肉まんを顔面に飛ばして1〜2秒留める
         function throwNikuman() {
+            const body = document.body;
             const nikuman = document.getElementById('nikuman');
             const midori = document.getElementById('midori-chan');
+            const box = document.getElementById('welcome-box');
+            const boxTitle = document.getElementById('box-title');
+            const boxText = document.getElementById('box-text');
+            const boxGuide = document.getElementById('box-guide');
             
             const rect = midori.getBoundingClientRect();
             const faceX = rect.left + rect.width * 0.5;
-            const faceY = rect.top + rect.height * 0.3; // 顔のあたり
+            const faceY = rect.top + rect.height * 0.3;
 
-            // ボタンを非表示に
+            // チャレンジボタンを消す
             document.getElementById('challenge-btn').classList.remove('show');
 
-            // 顔の位置に移動してドーンと大きく表示（直撃）
+            // 肉まんを顔面に命中
             nikuman.style.left = faceX + 'px';
             nikuman.style.top = faceY + 'px';
             nikuman.style.opacity = '1';
             nikuman.style.transform = 'translate(-50%, -50%) scale(1.3) rotate(15deg)';
 
-            // 1.8秒間その場で表示させ続けたあと、フワッと消す
+            // 1秒後に肉まんを消し、さらに立ち絵も消して背景を元に戻す
             setTimeout(() => {
-                nikuman.style.transition = 'opacity 0.5s ease';
+                nikuman.style.transition = 'opacity 0.3s ease';
                 nikuman.style.opacity = '0';
-            }, 1800);
+
+                // 立ち絵をスッと消す
+                midori.classList.remove('show');
+                // 白背景を元に戻す
+                body.classList.remove('white-bg');
+
+                // ちょっとしてから中央に「次のサプライズへ進む」ボタンを出す
+                setTimeout(() => {
+                    boxTitle.innerHTML = '<span>🎁 次のコンテンツへ</span>';
+                    boxText.innerHTML = '準備はいい？次の演出に進もう！';
+                    boxGuide.innerText = '👇 タップして次へ！';
+                    
+                    // ここで次に行う処理を割り当てられるようにしておく
+                    box.onclick = function() {
+                        alert('次のコンテンツはここに実装予定！'); // 後で書き換えられます
+                    };
+
+                    box.classList.remove('hide');
+                }, 500);
+
+            }, 1000); // 1秒表示
         }
     </script>
 
