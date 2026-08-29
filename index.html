@@ -30,7 +30,7 @@
         #music-start-box {
             position: relative;
             z-index: 40;
-            padding: 20px 20px;
+            padding: 22px 20px;
             background: rgba(0, 0, 0, 0.9);
             border: 3px solid #2ecc71;
             box-shadow: 0 0 25px #2ecc71;
@@ -39,7 +39,6 @@
             max-width: 420px;
             cursor: pointer;
             box-sizing: border-box;
-            margin-bottom: 20px;
             transition: transform 0.1s, opacity 0.4s;
         }
 
@@ -260,7 +259,7 @@
     <!-- 最初に音楽を再生するためのボタン -->
     <div id="music-start-box" onclick="startMusicAndShowMain()">
         <div class="music-title">🎧 嵐「Daylight」を再生する</div>
-        <div class="music-guide">（ここをタップして音楽をスタート）</div>
+        <div class="music-guide">（ここをタップしてスタート）</div>
     </div>
 
     <!-- メインおよびNEXT用のコンテナ -->
@@ -284,7 +283,7 @@
             player = new YT.Player('player', {
                 height: '0',
                 width: '0',
-                videoId: 'xU8ZaF_ym0I', // Daylightの動画ID
+                videoId: 'xU8ZaF_ym0I',
                 playerVars: {
                     'loop': 1,
                     'playlist': 'xU8ZaF_ym0I'
@@ -297,7 +296,6 @@
             if (player && typeof player.playVideo === 'function') {
                 player.playVideo();
             }
-            // 音楽ボタンを消して、お祝いの箱を表示する
             document.getElementById('music-start-box').classList.add('hide');
             document.getElementById('welcome-box').classList.add('show');
         }
@@ -435,19 +433,15 @@
                 body.classList.remove('white-bg');
 
                 setTimeout(() => {
-                    // 1回目のNEXT
                     showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            // 2回目のNEXT
                             showNextButton("NEXT", () => {
                                 box.classList.add('hide');
                                 runImageRain(photoList, () => {
-                                    // 3回目（ラストのいちばん高いギフト）のNEXT
                                     showNextButton("NEXT", () => {
                                         box.classList.add('hide');
                                         runImageRain(giftList, () => {
-                                            // すべて終わったあとのメッセージ
                                             showFinalMessage();
                                         });
                                     });
