@@ -26,7 +26,7 @@
             background: #ffffff !important;
         }
 
-        /* 音楽を別タブで開くボタンのスタイル */
+        /* 音楽再生ボタンのスタイル */
         #music-start-box {
             position: relative;
             z-index: 40;
@@ -39,14 +39,18 @@
             max-width: 420px;
             cursor: pointer;
             box-sizing: border-box;
-            text-decoration: none;
-            display: block;
             margin-bottom: 20px;
-            transition: transform 0.1s;
+            transition: transform 0.1s, opacity 0.4s;
         }
 
         #music-start-box:active {
             transform: scale(0.97);
+        }
+
+        #music-start-box.hide {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
         }
 
         .music-title {
@@ -80,6 +84,11 @@
             cursor: pointer;
             box-sizing: border-box;
             transition: transform 0.1s, opacity 0.4s;
+            display: none; /* 最初は非表示 */
+        }
+
+        .container.show {
+            display: block;
         }
 
         .container:active {
@@ -226,6 +235,11 @@
 </head>
 <body>
 
+    <!-- 音楽ファイル（daylight.mp3 を指定、ループ再生対応） -->
+    <audio id="bgm" loop>
+        <source src="daylight.mp3" type="audio/mp3">
+    </audio>
+
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
     <div id="challenge-btn" onclick="throwNikuman()">
@@ -234,11 +248,11 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 音楽を別タブで開くボタン -->
-    <a id="music-start-box" href="https://youtu.be/xU8ZaF_ym0I" target="_blank">
-        <div class="music-title">🎧 嵐「Daylight」を開く</div>
-        <div class="music-guide">（タップして音楽を再生してから戻る）</div>
-    </a>
+    <!-- 最初に音楽を鳴らすボタン -->
+    <div id="music-start-box" onclick="startMusicAndShowMain()">
+        <div class="music-title">🎧 音楽を再生してスタート</div>
+        <div class="music-guide">（ここをタップして音を鳴らす）</div>
+    </div>
 
     <!-- メインおよびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
@@ -248,6 +262,20 @@
         </h1>
         <div class="tap-guide" id="box-guide">（タップ）</div>
     </div>
+
+    <script>
+        // ボタンを押したときに曲を再生し、メインの箱を表示する関数
+        function startMusicAndShowMain() {
+            const bgm = document.getElementById('bgm');
+            bgm.play().catch(e => {
+                console.log("再生エラー:", e);
+            });
+
+            // 音楽ボタンを消して、お祝いの箱を表示する
+            document.getElementById('music-start-box').classList.add('hide');
+            document.getElementById('welcome-box').classList.add('show');
+        }
+    </script>
 
     <script>
         // 【1】スタート直後に流す約38件の画像リスト
