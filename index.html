@@ -26,20 +26,69 @@
             background: #ffffff !important;
         }
 
-        /* ボタンスタイル */
-        .container {
+        /* 音楽再生用ボタンのスタイル */
+        #music-start-box {
             position: relative;
-            z-index: 30;
-            padding: 25px 15px;
-            background: rgba(0, 0, 0, 0.85);
-            border: 2px solid #9b59b6;
+            z-index: 40;
+            padding: 20px 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #2ecc71;
             box-shadow: 0 0 25px #2ecc71;
             border-radius: 15px;
             width: 90%;
             max-width: 420px;
             cursor: pointer;
             box-sizing: border-box;
+            margin-bottom: 20px;
             transition: transform 0.1s, opacity 0.4s;
+        }
+
+        #music-start-box:active {
+            transform: scale(0.97);
+        }
+
+        #music-start-box.hide {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .music-title {
+            color: #2ecc71;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .music-guide {
+            font-size: 0.85rem;
+            color: #fff;
+            background: rgba(46, 204, 113, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            display: inline-block;
+            border: 1px dashed #2ecc71;
+        }
+
+        /* メインのコンテナ（最初は隠しておく） */
+        .container {
+            position: relative;
+            z-index: 30;
+            padding: 25px 15px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #9b59b6;
+            box-shadow: 0 0 25px #9b59b6;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 420px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: transform 0.1s, opacity 0.4s;
+            display: none; /* 最初は非表示 */
+        }
+
+        .container.show {
+            display: block;
         }
 
         .container:active {
@@ -208,7 +257,13 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 最初およびNEXT用のコンテナ -->
+    <!-- 最初に音楽を再生するためのボタン -->
+    <div id="music-start-box" onclick="startMusicAndShowMain()">
+        <div class="music-title">🎧 嵐「Daylight」を再生する</div>
+        <div class="music-guide">（ここをタップして音楽をスタート）</div>
+    </div>
+
+    <!-- メインおよびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1 id="box-title">
             <span>みどたん誕生日</span>
@@ -232,9 +287,19 @@
                 videoId: 'xU8ZaF_ym0I', // Daylightの動画ID
                 playerVars: {
                     'loop': 1,
-                    'playlist': 'xU8ZaF_ym0I' // ループ再生させるため
+                    'playlist': 'xU8ZaF_ym0I'
                 }
             });
+        }
+
+        // 音楽スタートボタンを押したときの処理
+        function startMusicAndShowMain() {
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
+            // 音楽ボタンを消して、お祝いの箱を表示する
+            document.getElementById('music-start-box').classList.add('hide');
+            document.getElementById('welcome-box').classList.add('show');
         }
     </script>
 
@@ -298,11 +363,6 @@
         ];
 
         function startShow() {
-            // 最初の画面をタップした瞬間にYouTubeの再生をスタートする
-            if (player && typeof player.playVideo === 'function') {
-                player.playVideo();
-            }
-
             const body = document.body;
             const box = document.getElementById('welcome-box');
             const midori = document.getElementById('midori-chan');
