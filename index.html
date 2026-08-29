@@ -440,17 +440,18 @@
                     showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            showShapeCollage(firstGroupList, 'star', () => {
+                            // 1回目：ハート
+                            showShapeCollage(firstGroupList, 'heart', () => {
                                 showNextButton("NEXT", () => {
                                     box.classList.add('hide');
                                     runImageRain(photoList, () => {
-                                        // 2回目：王冠（しっかり形が出るように修正！）
-                                        showShapeCollage(photoList, 'crown', () => {
+                                        // 2回目：ハート
+                                        showShapeCollage(photoList, 'heart', () => {
                                             showNextButton("NEXT", () => {
                                                 box.classList.add('hide');
                                                 runImageRain(giftList, () => {
-                                                    // 最後：しらすまん（肉まん型）
-                                                    showShapeCollage(giftList, 'nikuman', () => {
+                                                    // 最後：ハート ＋ メッセージカード
+                                                    showShapeCollage(giftList, 'heart', () => {
                                                         const finalCard = document.getElementById('final-card');
                                                         finalCard.classList.add('show');
                                                     });
@@ -523,25 +524,10 @@
             let photos = [];
 
             for (let i = 0; i < totalPhotos; i++) {
-                let hx = 0, hy = 0;
-                let scale = Math.min(window.innerWidth, window.innerHeight) / 14;
-
-                if (shapeType === 'nikuman') {
-                    let angle = (i / totalPhotos) * Math.PI * 2;
-                    hx = Math.sin(angle) * 4.5;
-                    hy = Math.cos(angle) * 3.8 - (Math.sin(angle) > 0 ? 0.5 : 0);
-                } else if (shapeType === 'star') {
-                    let angle = (i / totalPhotos) * Math.PI * 2;
-                    let r = (i % 2 === 0) ? 5 : 2.5;
-                    hx = r * Math.cos(angle) * 1.8;
-                    hy = r * Math.sin(angle) * 1.8;
-                } else if (shapeType === 'crown') {
-                    // 王冠らしくギザギザと上に尖る形にする計算
-                    let progress = i / totalPhotos;
-                    hx = (progress - 0.5) * 8; 
-                    // 左右の端と中央、3箇所がピョコっと高くなる王冠のライン
-                    hy = -Math.abs(Math.sin(progress * Math.PI * 3)) * 2.5 - 1.0;
-                }
+                let t = (i / totalPhotos) * Math.PI * 2;
+                let hx = 16 * Math.pow(Math.sin(t), 3);
+                let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                let scale = Math.min(window.innerWidth, window.innerHeight) / 38;
 
                 let posX = centerX + hx * scale - 21;
                 let posY = centerY + hy * scale - 21;
@@ -560,7 +546,9 @@
                 }, i * 35);
             }
 
-            let displayDuration = (shapeType === 'nikuman') ? 0 : 2200;
+            // 最後のトリ（3回目）の時だけ、ハートを残してメッセージカードを出すため消さない
+            let isLast = (onComplete && imageList === giftList);
+            let displayDuration = isLast ? 0 : 2200;
             
             if (displayDuration > 0) {
                 setTimeout(() => {
