@@ -26,7 +26,7 @@
             background: #ffffff !important;
         }
 
-        /* 音楽再生用ボタンのスタイル */
+        /* 音楽を別タブで開くボタンのスタイル */
         #music-start-box {
             position: relative;
             z-index: 40;
@@ -39,17 +39,14 @@
             max-width: 420px;
             cursor: pointer;
             box-sizing: border-box;
-            transition: transform 0.1s, opacity 0.4s;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 20px;
+            transition: transform 0.1s;
         }
 
         #music-start-box:active {
             transform: scale(0.97);
-        }
-
-        #music-start-box.hide {
-            opacity: 0;
-            pointer-events: none;
-            display: none;
         }
 
         .music-title {
@@ -69,7 +66,7 @@
             border: 1px dashed #2ecc71;
         }
 
-        /* メインのコンテナ（最初は隠しておく） */
+        /* メインのコンテナ */
         .container {
             position: relative;
             z-index: 30;
@@ -83,11 +80,6 @@
             cursor: pointer;
             box-sizing: border-box;
             transition: transform 0.1s, opacity 0.4s;
-            display: none; /* 最初は非表示 */
-        }
-
-        .container.show {
-            display: block;
         }
 
         .container:active {
@@ -199,7 +191,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 降ってくる画像（ゆったりした3列配置） */
+        /* 降ってくる画像 */
         .falling-image {
             position: absolute;
             top: -350px;
@@ -230,23 +222,9 @@
                 opacity: 0;
             }
         }
-
-        /* YouTubeプレイヤーを隠す用（音だけ流す） */
-        #youtube-player-container {
-            position: absolute;
-            bottom: -100px;
-            left: 0;
-            opacity: 0.01;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
-
-    <!-- 嵐 Daylight のYouTube埋め込み -->
-    <div id="youtube-player-container">
-        <div id="player"></div>
-    </div>
 
     <img id="midori-chan" src="IMG_3892.jpeg" alt="ミドリさん">
     
@@ -256,11 +234,11 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 最初に音楽を再生するためのボタン -->
-    <div id="music-start-box" onclick="startMusicAndShowMain()">
-        <div class="music-title">🎧 嵐「Daylight」を再生する</div>
-        <div class="music-guide">（ここをタップしてスタート）</div>
-    </div>
+    <!-- 音楽を別タブで開くボタン -->
+    <a id="music-start-box" href="https://youtu.be/xU8ZaF_ym0I" target="_blank">
+        <div class="music-title">🎧 嵐「Daylight」を開く</div>
+        <div class="music-guide">（タップして音楽を再生してから戻る）</div>
+    </a>
 
     <!-- メインおよびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
@@ -270,36 +248,6 @@
         </h1>
         <div class="tap-guide" id="box-guide">（タップ）</div>
     </div>
-
-    <!-- YouTube IFrame API の読み込み -->
-    <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: 'xU8ZaF_ym0I',
-                playerVars: {
-                    'loop': 1,
-                    'playlist': 'xU8ZaF_ym0I'
-                }
-            });
-        }
-
-        // 音楽スタートボタンを押したときの処理
-        function startMusicAndShowMain() {
-            if (player && typeof player.playVideo === 'function') {
-                player.playVideo();
-            }
-            document.getElementById('music-start-box').classList.add('hide');
-            document.getElementById('welcome-box').classList.add('show');
-        }
-    </script>
 
     <script>
         // 【1】スタート直後に流す約38件の画像リスト
