@@ -84,7 +84,7 @@
             cursor: pointer;
             box-sizing: border-box;
             transition: transform 0.1s, opacity 0.4s;
-            display: none; /* 最初は非表示 */
+            display: none;
         }
 
         .container.show {
@@ -232,11 +232,11 @@
             }
         }
 
-        /* 形に並ぶコラージュ用の写真スタイル共通 */
+        /* 形に並ぶコラージュ用の写真スタイル */
         .shape-photo {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 42px;
+            height: 42px;
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #fff;
@@ -278,7 +278,6 @@
 </head>
 <body>
 
-    <!-- 音楽ファイル（Love2.mp3 を指定、ループ再生対応） -->
     <audio id="bgm" loop>
         <source src="Love2.mp3" type="audio/mp3">
     </audio>
@@ -291,13 +290,11 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
-    <!-- 最初に音楽を鳴らすボタン -->
     <div id="music-start-box" onclick="startMusicAndShowMain()">
         <div class="music-title">🎧 音楽を再生してスタート</div>
         <div class="music-guide">（ここをタップして音を鳴らす）</div>
     </div>
 
-    <!-- メインおよびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1 id="box-title">
             <span>みどたん誕生日</span>
@@ -306,7 +303,6 @@
         <div class="tap-guide" id="box-guide">（タップ）</div>
     </div>
 
-    <!-- 最終メッセージカード -->
     <div id="final-card">
         <h1 style="color: #ff69b4; text-shadow: 0 0 10px #ff69b4; font-size: 1.2rem; margin-bottom: 12px;">
             ✨ Happy Birthday ✨
@@ -321,21 +317,17 @@
     </div>
 
     <script>
-        // ボタンを押したときに曲を再生し、メインの箱を表示する関数
         function startMusicAndShowMain() {
             const bgm = document.getElementById('bgm');
             bgm.play().catch(e => {
                 console.log("再生エラー:", e);
             });
-
-            // 音楽ボタンを消して、お祝いの箱を表示する
             document.getElementById('music-start-box').classList.add('hide');
             document.getElementById('welcome-box').classList.add('show');
         }
     </script>
 
     <script>
-        // 【1】スタート直後に流す約38件の画像リスト
         const firstGroupList = [
             'IMG_4533.jpeg', 'IMG_4539.jpeg', 'IMG_4547.jpeg', 'IMG_4565.jpeg', 
             'IMG_4593.jpeg', 'IMG_4603.jpeg', 'IMG_4606.jpeg', 'IMG_4608.jpeg', 
@@ -349,7 +341,6 @@
             'IMG_5007.jpeg', 'IMG_7541.png'
         ];
 
-        // 【2】NEXTを押したあとに流すメインの写真たちの配列
         const photoList = [
             'IMG_5011.jpeg', 'IMG_5010.jpeg', 'IMG_5006.jpeg', 'IMG_5003.jpeg', 'IMG_5002.jpeg',
             'IMG_4999.jpeg', 'IMG_4996.jpeg', 'IMG_4992.jpeg', 'IMG_4983.jpeg', 'IMG_4982.jpeg',
@@ -373,7 +364,6 @@
             'IMG_4630.jpeg', 'IMG_4627.jpeg', 'IMG_4624.jpeg', 'IMG_4621.jpeg'
         ];
 
-        // 【3】最後（いちばん高いギフト）の画像リスト
         const giftList = [
             'IMG_4572.JPG', 'IMG_4583.JPG', 'IMG_4605.JPG', 'IMG_4644.JPG',
             'IMG_4618.JPG', 'IMG_4619.JPG', 'IMG_4633.JPG', 'IMG_4631.JPG',
@@ -469,18 +459,18 @@
                     showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            // 1回目終了後：星（⭐）の形に並べる！
+                            // 1回目：星（⭐）
                             showShapeCollage(firstGroupList, 'star', () => {
                                 showNextButton("NEXT", () => {
                                     box.classList.add('hide');
                                     runImageRain(photoList, () => {
-                                        // 2回目終了後：王冠（👑）の形に並べる！
+                                        // 2回目：王冠（👑）※スマホに収まるサイズに調整
                                         showShapeCollage(photoList, 'crown', () => {
                                             showNextButton("NEXT", () => {
                                                 box.classList.add('hide');
                                                 runImageRain(giftList, () => {
-                                                    // 最後：ハート（💖）の形に並べてメッセージ！
-                                                    showShapeCollage(giftList, 'heart', () => {
+                                                    // 最後：しらすまん（肉まん型）！
+                                                    showShapeCollage(giftList, 'nikuman', () => {
                                                         const finalCard = document.getElementById('final-card');
                                                         finalCard.classList.add('show');
                                                     });
@@ -546,38 +536,39 @@
             box.classList.remove('hide');
         }
 
-        // 【汎用】指定した形（star / crown / heart）に写真を並べる関数
+        // スマホの画面内に綺麗に収まる形の計算関数
         function showShapeCollage(imageList, shapeType, onComplete) {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const totalPhotos = Math.min(imageList.length, 36); // 最大36枚
+            const totalPhotos = Math.min(imageList.length, 32); 
             let photos = [];
 
             for (let i = 0; i < totalPhotos; i++) {
                 let t = (i / totalPhotos) * Math.PI * 2;
                 let hx = 0, hy = 0;
-                let scale = Math.min(window.innerWidth, window.innerHeight) / 32;
+                // スマホの画面幅に合わせてギュッと収まるスケールに調整
+                let scale = Math.min(window.innerWidth, window.innerHeight) / 22;
 
-                if (shapeType === 'heart') {
-                    // ハートの数式
-                    hx = 16 * Math.pow(Math.sin(t), 3);
-                    hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                } else if (shapeType === 'star') {
-                    // 星の簡易座標（角砂糖のように配置する星形アルゴリズム）
+                if (shapeType === 'nikuman') {
+                    // 「しらすまん（肉まん）」の形（上まあるく、下が少しふっくらした可愛い饅頭型）
                     let angle = (i / totalPhotos) * Math.PI * 2;
-                    let r = (i % 2 === 0) ? 9 : 4.5;
-                    hx = r * Math.cos(angle) * 1.5;
-                    hy = r * Math.sin(angle) * 1.5;
+                    hx = Math.sin(angle) * 4.5;
+                    hy = Math.cos(angle) * 3.8 - (Math.sin(angle) > 0 ? 0.5 : 0);
+                } else if (shapeType === 'star') {
+                    // 綺麗な星の形
+                    let angle = (i / totalPhotos) * Math.PI * 2;
+                    let r = (i % 2 === 0) ? 5 : 2.5;
+                    hx = r * Math.cos(angle) * 1.8;
+                    hy = r * Math.sin(angle) * 1.8;
                 } else if (shapeType === 'crown') {
-                    // 王冠風のアーチ型配置
+                    // スマホ幅に収まる王冠のアーチ型
                     let angle = (i / totalPhotos) * Math.PI;
-                    hx = (i - totalPhotos / 2) * 0.8;
-                    hy = -Math.sin(angle) * 6 - 3;
-                    scale = scale * 1.2;
+                    hx = (i - totalPhotos / 2) * 0.35;
+                    hy = -Math.sin(angle) * 3.5 - 1.5;
                 }
 
-                let posX = centerX + hx * scale - 25;
-                let posY = centerY + hy * scale - 25;
+                let posX = centerX + hx * scale - 21;
+                let posY = centerY + hy * scale - 21;
 
                 let img = document.createElement('img');
                 img.src = imageList[i % imageList.length];
@@ -588,14 +579,12 @@
                 document.body.appendChild(img);
                 photos.push(img);
 
-                // 順番にパッと出現させる
                 setTimeout(() => {
                     img.classList.add('show');
-                }, i * 40);
+                }, i * 35);
             }
 
-            // 形が完成したあと、少し表示させてから消して次に進む（最後のハートのときは消さずに残す）
-            let displayDuration = (shapeType === 'heart') ? 0 : 2500;
+            let displayDuration = (shapeType === 'nikuman') ? 0 : 2200;
             
             if (displayDuration > 0) {
                 setTimeout(() => {
@@ -606,13 +595,13 @@
                     setTimeout(() => {
                         photos.forEach(img => img.remove());
                         if (onComplete) onComplete();
-                    }, 800);
-                }, totalPhotos * 40 + displayDuration);
+                    }, 600);
+                }, totalPhotos * 35 + displayDuration);
             } else {
-                // 最後のハートのときはそのまま残してコールバック（メッセージカードを出す）を実行
+                // 最後の「しらすまん」はそのまま残してメッセージカードを表示
                 setTimeout(() => {
                     if (onComplete) onComplete();
-                }, totalPhotos * 40 + 400);
+                }, totalPhotos * 35 + 300);
             }
         }
     </script>
