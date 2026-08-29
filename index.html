@@ -235,6 +235,7 @@
 </head>
 <body>
 
+    <!-- 音楽ファイル（Love2.mp3 を指定、ループ再生対応） -->
     <audio id="bgm" loop>
         <source src="Love2.mp3" type="audio/mp3">
     </audio>
@@ -247,11 +248,13 @@
 
     <img id="nikuman" src="IMG_3896.png" alt="肉まん">
 
+    <!-- 最初に音楽を鳴らすボタン -->
     <div id="music-start-box" onclick="startMusicAndShowMain()">
         <div class="music-title">🎧 音楽を再生してスタート</div>
         <div class="music-guide">（ここをタップして音を鳴らす）</div>
     </div>
 
+    <!-- メインおよびNEXT用のコンテナ -->
     <div class="container" id="welcome-box" onclick="startShow()">
         <h1 id="box-title">
             <span>みどたん誕生日</span>
