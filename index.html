@@ -440,17 +440,17 @@
                     showNextButton("NEXT", () => {
                         box.classList.add('hide');
                         runImageRain(firstGroupList, () => {
-                            // 1回目：ハート
+                            // 1回目：雨が完全に消えた後にハートを出す
                             showShapeCollage(firstGroupList, 'heart', () => {
                                 showNextButton("NEXT", () => {
                                     box.classList.add('hide');
                                     runImageRain(photoList, () => {
-                                        // 2回目：ハート
+                                        // 2回目：雨が完全に消えた後にハートを出す
                                         showShapeCollage(photoList, 'heart', () => {
                                             showNextButton("NEXT", () => {
                                                 box.classList.add('hide');
                                                 runImageRain(giftList, () => {
-                                                    // 最後：ハート ＋ メッセージカード
+                                                    // 最後：雨が完全に消えた後にハートとカードを出す
                                                     showShapeCollage(giftList, 'heart', () => {
                                                         const finalCard = document.getElementById('final-card');
                                                         finalCard.classList.add('show');
@@ -483,11 +483,12 @@
                 } else {
                     clearInterval(rainInterval);
 
+                    // ★修正：最後の1枚が画面下に完全に落ちきるまでしっかり待つ（余裕を持たせて4.5秒に設定）
                     setTimeout(() => {
                         if (onComplete) onComplete();
-                    }, 3800);
+                    }, 4500);
                 }
-            }, 220);
+            }, 180);
         }
 
         function createSingleImage(imageSrc, xPos) {
@@ -496,7 +497,7 @@
             img.className = 'falling-image';
             img.style.left = xPos + 'px';
 
-            const duration = 3.5;
+            const duration = 3.0; // 落ちる速度
             img.style.animationDuration = duration + 's';
 
             document.body.appendChild(img);
@@ -546,9 +547,8 @@
                 }, i * 35);
             }
 
-            // 最後のトリ（3回目）の時だけ、ハートを残してメッセージカードを出すため消さない
             let isLast = (onComplete && imageList === giftList);
-            let displayDuration = isLast ? 0 : 2200;
+            let displayDuration = isLast ? 0 : 2500;
             
             if (displayDuration > 0) {
                 setTimeout(() => {
