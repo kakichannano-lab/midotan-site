@@ -12,6 +12,7 @@
             color: #fff;
             font-family: sans-serif;
             overflow: hidden;
+            width: 100vw;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -19,6 +20,7 @@
             justify-content: center;
             text-align: center;
             position: relative;
+            box-sizing: border-box;
             transition: background 0.4s ease;
         }
 
@@ -194,13 +196,13 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 横3つをキレイな間隔で並べるための行コンテナ */
+        /* 横3列の写真をきれいに、かつゆったり見やすく降らせる設定 */
         .image-row {
             position: absolute;
-            top: -250px;
+            top: -300px;
             display: flex;
             justify-content: center;
-            gap: 12px; /* 写真と写真の間の隙間をきれいに統一 */
+            gap: 15px;
             width: 100%;
             animation: fallRow linear forwards;
             pointer-events: none;
@@ -208,24 +210,25 @@
         }
 
         .image-row img {
-            width: 27vw;
-            max-width: 100px;
+            width: 28vw;
+            max-width: 110px;
             height: auto;
-            border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
             opacity: 0.95;
         }
 
         @keyframes fallRow {
             0% { transform: translateY(0); }
-            100% { transform: translateY(calc(100vh + 350px)); }
+            100% { transform: translateY(calc(100vh + 400px)); }
         }
 
+        /* 画面からはみ出さない、ズレないハート型配置 */
         .shape-photo {
             position: absolute;
-            width: 46px;
-            height: 46px;
+            width: 42px;
+            height: 42px;
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #fff;
@@ -474,13 +477,12 @@
 
         function runImageRain(imageList, onComplete) {
             let index = 0;
-            // 3枚ずつセットにして降らせる
+            // 3枚セットの降るスピードを少しゆっくりにして、じっくり見られるように調整
             let rainInterval = setInterval(() => {
                 if (index < imageList.length) {
                     let rowDiv = document.createElement('div');
                     rowDiv.className = 'image-row';
 
-                    // 3枚の写真を横並びにするセットを作る
                     for (let i = 0; i < 3; i++) {
                         if (index < imageList.length) {
                             let img = document.createElement('img');
@@ -490,7 +492,7 @@
                         }
                     }
 
-                    const duration = 2.8;
+                    const duration = 3.8; // 落下速度を落として見やすく
                     rowDiv.style.animationDuration = duration + 's';
 
                     document.body.appendChild(rowDiv);
@@ -502,11 +504,12 @@
                 } else {
                     clearInterval(rainInterval);
 
+                    // 写真が全部落ちたらすぐに（待たずに）ハートを表示
                     setTimeout(() => {
                         if (onComplete) onComplete();
-                    }, 3300);
+                    }, 400); 
                 }
-            }, 350); // 3枚セットがテンポよく上から流れてくる間隔
+            }, 450); // セットごとの間隔を空けてスッキリさせる
         }
 
         function showNextButton(text, onClickCallback) {
@@ -523,17 +526,21 @@
         function showShapeCollage(imageList, shapeType, onComplete) {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const totalPhotos = Math.min(imageList.length, 36);
+            const totalPhotos = Math.min(imageList.length, 34);
             let photos = [];
+
+            // 画面からはみ出さないように、画面の幅・高さに合わせてハートのサイズを安全に縮小計算
+            let screenMin = Math.min(window.innerWidth, window.innerHeight);
+            let scale = screenMin / 38; 
 
             for (let i = 0; i < totalPhotos; i++) {
                 let t = (i / totalPhotos) * Math.PI * 2;
                 let hx = 16 * Math.pow(Math.sin(t), 3);
                 let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                let scale = Math.min(window.innerWidth, window.innerHeight) / 34;
 
-                let posX = centerX + hx * scale - 23;
-                let posY = centerY + hy * scale - 23;
+                // 完全に画面中央に配置し、右側がズレてはみ出さないようにマージンを調整
+                let posX = centerX + hx * scale - 21;
+                let posY = centerY + hy * scale - 21;
 
                 let img = document.createElement('img');
                 img.src = imageList[i % imageList.length];
@@ -550,7 +557,7 @@
             }
 
             let isLast = (onComplete && imageList === giftList);
-            let displayDuration = isLast ? 0 : 2000;
+            let displayDuration = isLast ? 0 : 2500;
             
             if (displayDuration > 0) {
                 setTimeout(() => {
