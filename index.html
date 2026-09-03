@@ -196,13 +196,13 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 横3列の写真をきれいに、かつゆったり見やすく降らせる設定 */
+        /* 写真をよりゆっくり、重ならずに見やすく降らせる設定 */
         .image-row {
             position: absolute;
             top: -300px;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 18px;
             width: 100%;
             animation: fallRow linear forwards;
             pointer-events: none;
@@ -210,8 +210,8 @@
         }
 
         .image-row img {
-            width: 28vw;
-            max-width: 110px;
+            width: 27vw;
+            max-width: 105px;
             height: auto;
             border-radius: 10px;
             border: 2px solid rgba(255, 255, 255, 0.95);
@@ -221,14 +221,14 @@
 
         @keyframes fallRow {
             0% { transform: translateY(0); }
-            100% { transform: translateY(calc(100vh + 400px)); }
+            100% { transform: translateY(calc(100vh + 450px)); }
         }
 
-        /* 画面からはみ出さない、ズレないハート型配置 */
+        /* 完全に画面中央に収まるハート型配置 */
         .shape-photo {
             position: absolute;
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #fff;
@@ -477,7 +477,11 @@
 
         function runImageRain(imageList, onComplete) {
             let index = 0;
-            // 3枚セットの降るスピードを少しゆっくりにして、じっくり見られるように調整
+            // 落ちるスピードをさらにゆったりに（4.5秒かけて画面を通過）
+            const duration = 4.5; 
+            // 3枚セットが出てくる間隔も広げて、重なりを完全に防ぐ
+            const spawnInterval = 550; 
+
             let rainInterval = setInterval(() => {
                 if (index < imageList.length) {
                     let rowDiv = document.createElement('div');
@@ -492,9 +496,7 @@
                         }
                     }
 
-                    const duration = 3.8; // 落下速度を落として見やすく
                     rowDiv.style.animationDuration = duration + 's';
-
                     document.body.appendChild(rowDiv);
 
                     setTimeout(() => {
@@ -504,12 +506,13 @@
                 } else {
                     clearInterval(rainInterval);
 
-                    // 写真が全部落ちたらすぐに（待たずに）ハートを表示
+                    // 【最重要】最後の列が画面の一番下に落ちきってから（duration分しっかり待ってから）ハートを出す
+                    const totalWaitTime = (duration * 1000) + 200; 
                     setTimeout(() => {
                         if (onComplete) onComplete();
-                    }, 400); 
+                    }, totalWaitTime); 
                 }
-            }, 450); // セットごとの間隔を空けてスッキリさせる
+            }, spawnInterval);
         }
 
         function showNextButton(text, onClickCallback) {
@@ -526,21 +529,20 @@
         function showShapeCollage(imageList, shapeType, onComplete) {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const totalPhotos = Math.min(imageList.length, 34);
+            const totalPhotos = Math.min(imageList.length, 32); // 画面にぴったり収まる数に最適化
             let photos = [];
 
-            // 画面からはみ出さないように、画面の幅・高さに合わせてハートのサイズを安全に縮小計算
+            // 完全に画面中央におさまり、右側にハミ出さない安全なサイズ計算
             let screenMin = Math.min(window.innerWidth, window.innerHeight);
-            let scale = screenMin / 38; 
+            let scale = screenMin / 40; 
 
             for (let i = 0; i < totalPhotos; i++) {
                 let t = (i / totalPhotos) * Math.PI * 2;
                 let hx = 16 * Math.pow(Math.sin(t), 3);
                 let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
-                // 完全に画面中央に配置し、右側がズレてはみ出さないようにマージンを調整
-                let posX = centerX + hx * scale - 21;
-                let posY = centerY + hy * scale - 21;
+                let posX = centerX + hx * scale - 19;
+                let posY = centerY + hy * scale - 19;
 
                 let img = document.createElement('img');
                 img.src = imageList[i % imageList.length];
@@ -557,7 +559,7 @@
             }
 
             let isLast = (onComplete && imageList === giftList);
-            let displayDuration = isLast ? 0 : 2500;
+            let displayDuration = isLast ? 0 : 3000; // ハートを表示しておく時間
             
             if (displayDuration > 0) {
                 setTimeout(() => {
